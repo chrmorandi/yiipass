@@ -142,16 +142,6 @@ class PasswordController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actions()
-    {
-        return [
-            'delete-multiple' => [
-                'class' => 'mickgeek\actionbar\DeleteMultipleAction',
-                'modelClass' => 'app\models\Password',
-            ],
-        ];
-    }
-
     /**
      * Finds the Password model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
