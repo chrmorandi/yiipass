@@ -20,6 +20,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+
+
     <?php if(Yii::$app->session->hasFlash('success')){ ?>
         <div class="alert alert-success" role="alert">
             <?= Yii::$app->session->getFlash('success'); ?>
@@ -54,7 +56,26 @@ $this->params['breadcrumbs'][] = $this->title;
             'group',
             'lastaccess',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {open_url} {copy_username} {copy_password}',
+                'buttons' => [
+                    'open_url' => function($url, $model, $key){
+                        if($model->url !== ''){
+                            return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
+                        }
+                    },
+                    'copy_username' => function($url, $model, $key){
+                        if($model->username !== ''){
+                            return '<button class="copy_button" data-clipboard-text="' . $model->username . '" title="Click to copy me.">Copy Username</button>';
+                        }
+                    },
+                    'copy_password' => function($url, $model, $key){
+                        if($model->password !== ''){
+                            return '<button class="copy_button" data-clipboard-text="' . $model->password . '" title="Click to copy me.">Copy Password</button>';
+                        }
+                    }
+                ]
+            ],
         ],
     ]); ?>
 
