@@ -62,13 +62,85 @@ class UserController extends Controller
     {
         $model = new User();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model->load(['username' => 'foo',
+                        'auth_key' => '46344hsgdsgsa8',
+                        'password_hash' => 'adsfhsd6363',
+                        'password_reset_token' => 'adsfhsd6363',
+                        'email' => 'adsfhsd6363'
+                    ]);
+
+        if ($model->load(Yii::$app->request->post())) {
+
+            $arr_request = Yii::$app->request->post()['User'];
+
+            $this->formInputDataValidation($arr_request, $model);
+
+            $model->auth_key = Yii::$app->security->generateRandomString();
+
+            $model->email = $arr_request['email'];
+
+            $model->created_at = time();
+
+            $model->updated_at = time();
+
+            $model->username = $arr_request['username'];
+
+            $model->password_hash = Yii::$app->security->generatePasswordHash($arr_request['password']);
+
+            $model->status = 10;
+
+            $model->save();
+
+            $found_model = $this->findModel($model->id);
+
+            return $this->render('view', [
+                'model' => $this->findModel($model->id),
+            ]);
+
         } else {
             return $this->render('create', [
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+     * Validates the data for user creation or user update.
+     *
+     * @param $arr_request
+     * @param $model
+     * @return mixed
+     */
+    protected function formInputDataValidation($arr_request, $model){
+
+        /**
+         * Init the error variable with false and if any error appears,
+         * set it with true.
+         */
+        $error = false;
+
+        // Are all password fields filled?
+        if ($arr_request['password'] == '' && $arr_request['password_repeat'] == '') {
+            Yii::$app->session->setFlash('passwordFieldNotFilled');
+            $error = true;
+        }
+
+        // Is the repeated password the same like the password?
+        if (!Yii::$app->security->compareString($arr_request['password'], $arr_request['password_repeat'])) {
+            Yii::$app->session->setFlash('passwordsNotTheSame');
+            $error = true;
+        }
+
+        if($arr_request['email'] == ''){
+            Yii::$app->session->setFlash('emailEmpty');
+            $error = true;
+        }
+
+        // Refresh the page and display error, if there is any.
+        if($error === true){
+            return $this->refresh();
+        }
+
     }
 
     /**

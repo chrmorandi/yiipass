@@ -10,25 +10,47 @@ use yii\widgets\ActiveForm;
 
 <div class="user-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php if (Yii::$app->session->hasFlash('passwordsNotTheSame')) : ?>
 
-    <?= $form->field($model, 'id')->textInput() ?>
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Passwords are not equal.
+        </div>
+
+    <?php endif; ?>
+
+    <?php if (Yii::$app->session->hasFlash('passwordFieldNotFilled')) : ?>
+
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            The "Password" or the "Password Repeat" field is not filled.
+        </div>
+
+    <?php endif; ?>
+
+    <?php if (Yii::$app->session->hasFlash('emailEmpty')) : ?>
+
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            The eMail field must not be empty.
+        </div>
+
+    <?php endif; ?>
+
+    <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'auth_key')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'password_hash')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'password_reset_token')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'password_repeat')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

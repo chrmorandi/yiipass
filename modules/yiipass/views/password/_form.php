@@ -28,12 +28,6 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'creation')->textInput() ?>
-
-        <?= $form->field($model, 'lastaccess')->textInput() ?>
-
-        <?= $form->field($model, 'lastmod')->textInput() ?>
-
         <?= $form->field($model, 'expire')->textInput() ?>
     </p>
 
