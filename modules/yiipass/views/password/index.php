@@ -66,12 +66,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'copy_username' => function($url, $model, $key){
                         if($model->username !== ''){
-                            return '<button class="copy_button" data-clipboard-text="' . $model->username . '" title="Click to copy me.">Copy Username</button>';
+                            return '<button type="button" class="copy_username copy_button" data-clipboard-text="' . $model->username . '" title="Click to copy me.">Copy Username</button>';
                         }
                     },
                     'copy_password' => function($url, $model, $key){
                         if($model->password !== ''){
-                            return '<button class="copy_button" data-clipboard-text="' . $model->password . '" title="Click to copy me.">Copy Password</button>';
+                            return '<button type="button" class="copy_password copy_button" data-clipboard-text="' . $model->password . '" title="Click to copy me.">Copy Password</button>';
                         }
                     }
                 ]
