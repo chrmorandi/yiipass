@@ -144,6 +144,67 @@ class UserController extends Controller
     }
 
     /**
+     * This method creates a permission. There's one permission per password.
+     *
+     * @param $name
+     * @param $description
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function createPermission($name, $description){
+        $auth = Yii::$app->authManager;
+
+        $new_permission = $auth->createPermission($name);
+        $new_permission->description = $description;
+
+        $auth->add($new_permission);
+    }
+
+    /**
+     * This method creates a role. There's one role per permission.
+     *
+     * @param $role_name
+     * @param $user_id_or_name int|string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionCreateRole($role_name, $user_id_or_name){
+        $user_id = $this->getUserId($user_id_or_name);
+
+        $auth = Yii::$app->authManager;
+        $role = $auth->createRole($role_name . '-user-id-' . $user_id);
+        $auth->add($role);
+    }
+
+    /**
+     * This method assigns a permission to an user.
+     *
+     * Please note: It's speciality relies in the fact that 1 permission
+     * has "1 role". Because the permissions are assigned to users and
+     * not to roles. Yii's role system is used with a little work-around here.
+     * For this "-r4uid- + the user id is added to the role name.
+     *
+     * @param $user_id_or_name
+     * @param $permission_name
+     * @throws \Exception
+     */
+    public function actionAddPermissionToUser($user_id_or_name, $permission_name){
+        $user_id = $this->getUserId($user_id_or_name);
+
+        if(UserController::authManager()->getPermission($permission_name) !== NULL){
+            $role = UserController::authManager()->createRole($permission_name . '-r4uid-' . $user_id);
+            // add parent item.
+            UserController::authManager()->add($role);
+            $permission = UserController::authManager()->getPermission($permission_name);
+            // add child item.
+            UserController::authManager()->addChild($role, $permission);
+
+            // assign role to user by id.
+            UserController::authManager()->assign($role, $user_id);
+        } else {
+            throw new \Exception("Permission don't exist.");
+        }
+    }
+
+    /**
      * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
