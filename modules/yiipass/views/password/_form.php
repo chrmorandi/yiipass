@@ -31,6 +31,8 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'expire')->textInput() ?>
     </p>
 
+    <?= $user_checkboxes ?>
+
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

@@ -2,15 +2,16 @@
 
 namespace app\modules\yiipass\controllers;
 
+use app\modules\yiipass\models\User;
 use Yii;
 use app\modules\yiipass\models\Password;
 use app\modules\yiipass\models\PasswordSearch;
 use app\modules\yiipass\models\XmlUploadForm;
-use app\modules\yiipass\controllers\ImportXmlController;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
+use yii\helpers\BaseHtml;
 
 /**
  * PasswordController implements the CRUD actions for Password model.
@@ -120,11 +121,32 @@ class PasswordController extends Controller
     {
         $model = $this->findModel($id);
 
+        $user_model = new User();
+
+        $user_checkboxes = '';
+        $all_users = User::find()
+                                ->all();
+
+        foreach($all_users as $user){
+            $user_checkboxes .= BaseHtml::activeCheckbox($user_model,
+                                                        'id',
+                                                        ['value' => $user->id,
+                                                        'label' => $user->username,
+                                                        'uncheck' => null]);
+        }
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $post_request = Yii::$app->request->post();
+
+            $user_controller = new UserController();
+
+            //$user_controller->actionAddPermissionToUser()
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'user_checkboxes' => $user_checkboxes
             ]);
         }
     }

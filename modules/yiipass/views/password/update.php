@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'user_checkboxes' => $user_checkboxes
     ]) ?>
 
 </div>

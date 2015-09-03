@@ -5,6 +5,7 @@ namespace app\modules\yiipass\controllers;
 use Yii;
 use app\modules\yiipass\models\User;
 use app\modules\yiipass\models\UserSearch;
+use yii\helpers\BaseHtml;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -14,6 +15,10 @@ use yii\filters\VerbFilter;
  */
 class UserController extends Controller
 {
+    function __construct(){
+
+    }
+
     public function behaviors()
     {
         return [
@@ -218,7 +223,7 @@ class UserController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                'model' => $model
             ]);
         }
     }
