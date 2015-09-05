@@ -38,11 +38,15 @@ use yii\helpers\BaseHtml;
     $user_checkboxes = '<label class="control-label" for="users">Allowed users</label><ul class="list-group">';
 
     foreach($all_users as $user){
+        $checkbox_status = null;
+        if(is_array($users_account_credential_ids) && in_array($model->id, $users_account_credential_ids[$user->id])){
+            $checkbox_status = 'checked';
+        }
         $user_checkboxes .= '<li class="list-group-item">' . BaseHtml::activeCheckbox($user_model,
             'id',
             ['value' => $user->id,
             'label' => $user->username,
-            'uncheck' => null]) . '</li>';
+            'uncheck' => $checkbox_status]) . '</li>';
     }
 
     $user_checkboxes .= '</ul>';

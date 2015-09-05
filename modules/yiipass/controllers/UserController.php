@@ -263,4 +263,23 @@ class UserController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * Gets all permissions which have been set for a given user.
+     *
+     * @param $user_id
+     * @return array
+     */
+    public function getPermissionsForUser($user_id){
+        $all_permissions = self::authManager()->getPermissions();
+        $all_permissions_for_user = array();
+
+        foreach($all_permissions as $permission){
+            if(self::authManager()->checkAccess($user_id, $permission->name) === true){
+                $all_permissions_for_user[] = $permission;
+            }
+        }
+
+        return $all_permissions_for_user;
+    }
 }

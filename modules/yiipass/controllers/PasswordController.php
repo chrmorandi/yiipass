@@ -29,6 +29,13 @@ class PasswordController extends Controller
         ];
     }
 
+    /**
+     * Allows download as passwords for KeePass programs as XML file.
+     *
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\web\HttpException
+     * return null
+     */
     public function actionDownloadPasswordsAsKeePassXml()
     {
 
@@ -48,6 +55,8 @@ class PasswordController extends Controller
 
     /**
      * Upload new KeePass XML file to import into new or existing database.
+     *
+     * @return string
      */
     public function actionUploadNewXml()
     {
@@ -69,6 +78,7 @@ class PasswordController extends Controller
 
     /**
      * Lists all Password models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -84,6 +94,7 @@ class PasswordController extends Controller
 
     /**
      * Displays a single Password model.
+     *
      * @param integer $id
      * @return mixed
      */
@@ -95,8 +106,9 @@ class PasswordController extends Controller
     }
 
     /**
-     * Creates a new Password model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * Creates a new Password model. If creation is successful, the browser
+     * will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -113,8 +125,9 @@ class PasswordController extends Controller
     }
 
     /**
-     * Updates an existing Password model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * Updates an existing Password model. If update is successful, the
+     * browser will be redirected to the 'view' page.
+     *
      * @param integer $id
      * @return mixed
      */
@@ -130,7 +143,8 @@ class PasswordController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $post_request = Yii::$app->request->post();
 
-            $user_controller = new UserController('PasswordController', 'app\modules\yiipass');
+            $user_controller = new UserController('PasswordController',
+                                                    'app\modules\yiipass');
 
             foreach ($post_request['User'] as $user) {
                 /**
@@ -145,17 +159,25 @@ class PasswordController extends Controller
 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+            // Enrich users array with account credentials info.
+            $account_credential_ids = array();
+            foreach($all_users as &$user){
+                $users_account_credential_ids[$user->id] = $this->getAccountCredentialIdsSetForUser($user->id);
+            }
+
             return $this->render('update', [
                 'model' => $model,
                 'all_users' => $all_users,
-                'user_model' => $user_model
+                'user_model' => $user_model,
+                'users_account_credential_ids' => $users_account_credential_ids
             ]);
         }
     }
 
     /**
-     * Deletes an existing Password model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * Deletes an existing Password model. If deletion is successful, the
+     * browser will be redirected to the 'index' page.
+     *
      * @param integer $id
      * @return mixed
      */
@@ -167,11 +189,13 @@ class PasswordController extends Controller
     }
 
     /**
-     * Finds the Password model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     * Finds the Password model based on its primary key value. If the model
+     * is not found, a 404 HTTP exception will be thrown.
+     *
      * @param integer $id
      * @return Password the loaded model
      * @throws NotFoundHttpException if the model cannot be found
+     * return null
      */
     protected function findModel($id)
     {
@@ -180,5 +204,29 @@ class PasswordController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * Gets the account credentials (the passwords) by Yii's permissions
+     * functionality from auth manager.
+     *
+     * @param $user_id
+     * @return array
+     */
+    public function getAccountCredentialIdsSetForUser($user_id){
+
+        $user_controller = new UserController('PasswordController',
+                                                'app\modules\yiipass');
+        $permissions = $user_controller->getPermissionsForUser($user_id);
+
+        $account_credential_ids = array();
+
+        foreach($permissions as $permission){
+            if(is_numeric(strpos($permission->name, 'password-id-'))){
+                $account_credential_ids[] = str_replace('password-id-', '', $permission->name);
+            }
+        }
+
+        return $account_credential_ids;
     }
 }
