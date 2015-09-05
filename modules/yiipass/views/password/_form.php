@@ -40,7 +40,7 @@ use yii\helpers\BaseHtml;
     foreach($all_users as $user){
         $checkbox_status = null;
         if(is_array($users_account_credential_ids) && in_array($model->id, $users_account_credential_ids[$user->id])){
-            $checkbox_status = 'checked';
+            $checkbox_status = 1;
         }
         $user_checkboxes .= '<li class="list-group-item">' . BaseHtml::activeCheckbox($user_model,
             'id',
