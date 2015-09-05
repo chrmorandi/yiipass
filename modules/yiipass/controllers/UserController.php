@@ -15,10 +15,6 @@ use yii\filters\VerbFilter;
  */
 class UserController extends Controller
 {
-    function __construct(){
-
-    }
-
     public function behaviors()
     {
         return [

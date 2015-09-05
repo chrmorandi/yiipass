@@ -138,7 +138,7 @@ class PasswordController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $post_request = Yii::$app->request->post();
 
-            $user_controller = new UserController();
+            //$user_controller = new UserController();
 
             //$user_controller->actionAddPermissionToUser()
 
