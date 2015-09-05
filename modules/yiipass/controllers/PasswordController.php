@@ -11,7 +11,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
-use yii\helpers\BaseHtml;
 
 /**
  * PasswordController implements the CRUD actions for Password model.
@@ -123,30 +122,30 @@ class PasswordController extends Controller
 
         $user_model = new User();
 
-        $user_checkboxes = '';
         $all_users = User::find()
                                 ->all();
-
-        foreach($all_users as $user){
-            $user_checkboxes .= BaseHtml::activeCheckbox($user_model,
-                                                        'id',
-                                                        ['value' => $user->id,
-                                                        'label' => $user->username,
-                                                        'uncheck' => null]);
-        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $post_request = Yii::$app->request->post();
 
-            //$user_controller = new UserController();
+            $user_controller = new UserController('PasswordController', 'app\modules\yiipass');
 
-            //$user_controller->actionAddPermissionToUser()
+            foreach($post_request['User'] as $user){
+                /**
+                 * Add permission for password. Mark the permission name with
+                 * "password-id" to be flexible about saving different types of
+                 * permissions in future. "password-id-" can be later on
+                 * replaced to the get only the id for further handling.
+                 */
+                $user_controller->addPermissionToUser($user, 'password-id-' . $post_request['Password']['id']);
+            }
 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
-                'user_checkboxes' => $user_checkboxes
+                'all_users' => $all_users,
+                'user_model' => $user_model
             ]);
         }
     }

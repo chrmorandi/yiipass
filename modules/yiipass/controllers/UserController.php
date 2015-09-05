@@ -176,6 +176,18 @@ class UserController extends Controller
     }
 
     /**
+     * Returns Yii's authManager.
+     *
+     * This method sets the mother db active, because the authorization
+     * data is in the mother db.
+     *
+     * @return \yii\rbac\ManagerInterface
+     */
+    public static function authManager(){
+        return Yii::$app->authManager;
+    }
+
+    /**
      * This method assigns a permission to an user.
      *
      * Please note: It's speciality relies in the fact that 1 permission
@@ -187,22 +199,21 @@ class UserController extends Controller
      * @param $permission_name
      * @throws \Exception
      */
-    public function actionAddPermissionToUser($user_id_or_name, $permission_name){
-        $user_id = $this->getUserId($user_id_or_name);
+    public function addPermissionToUser($user_id, $permission_name){
 
-        if(UserController::authManager()->getPermission($permission_name) !== NULL){
-            $role = UserController::authManager()->createRole($permission_name . '-r4uid-' . $user_id);
-            // add parent item.
-            UserController::authManager()->add($role);
-            $permission = UserController::authManager()->getPermission($permission_name);
-            // add child item.
-            UserController::authManager()->addChild($role, $permission);
-
-            // assign role to user by id.
-            UserController::authManager()->assign($role, $user_id);
-        } else {
-            throw new \Exception("Permission don't exist.");
+        if(self::authManager()->getPermission($permission_name) == NULL) {
+            $this->createPermission($permission_name, 'The permission for one account\'s credentials data.');
         }
+
+        $role = self::authManager()->createRole($permission_name . '-r4uid-' . $user_id);
+        // add parent item.
+        self::authManager()->add($role);
+        $permission = self::authManager()->getPermission($permission_name);
+        // add child item.
+        self::authManager()->addChild($role, $permission);
+
+        // assign role to user by id.
+        self::authManager()->assign($role, $user_id);
     }
 
     /**
