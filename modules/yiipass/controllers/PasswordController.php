@@ -29,11 +29,12 @@ class PasswordController extends Controller
         ];
     }
 
-    public function actionDownloadPasswordsAsKeePassXml(){
+    public function actionDownloadPasswordsAsKeePassXml()
+    {
 
         $all_passwords = Password::find()
-                                        ->asArray()
-                                        ->all();
+            ->asArray()
+            ->all();
 
         /* @var $xml_service \app\modules\yiipass\services\SimpleKeePassXmlService */
         $xml_service = \Yii::$app->getModule('yiipass')->get('SimpleKeePassXmlService');
@@ -48,7 +49,8 @@ class PasswordController extends Controller
     /**
      * Upload new KeePass XML file to import into new or existing database.
      */
-    public function actionUploadNewXml(){
+    public function actionUploadNewXml()
+    {
         $model = new XmlUploadForm();
 
         if (Yii::$app->request->isPost) {
@@ -123,21 +125,22 @@ class PasswordController extends Controller
         $user_model = new User();
 
         $all_users = User::find()
-                                ->all();
+                            ->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $post_request = Yii::$app->request->post();
 
             $user_controller = new UserController('PasswordController', 'app\modules\yiipass');
 
-            foreach($post_request['User'] as $user){
+            foreach ($post_request['User'] as $user) {
                 /**
                  * Add permission for password. Mark the permission name with
                  * "password-id" to be flexible about saving different types of
                  * permissions in future. "password-id-" can be later on
                  * replaced to the get only the id for further handling.
                  */
-                $user_controller->addPermissionToUser($user, 'password-id-' . $post_request['Password']['id']);
+                $user_controller->addPermissionToUser($user,
+                    'password-id-' . $post_request['Password']['id']);
             }
 
             return $this->redirect(['view', 'id' => $model->id]);

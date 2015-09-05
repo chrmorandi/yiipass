@@ -17,7 +17,7 @@ use yii\helpers\BaseHtml;
     <?= Html::button('Toggle Password', array('id' => 'toggle_password')) ?>
 
     <p>
-        <?= BaseHtml::hiddenInput("Password[id]", $model->id) ?>
+        <?= BaseHtml::hiddenInput('Password[id]', $model->id) ?>
 
         <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
