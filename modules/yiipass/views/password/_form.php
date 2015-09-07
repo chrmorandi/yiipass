@@ -34,24 +34,10 @@ use yii\helpers\BaseHtml;
         <?= $form->field($model, 'expire')->textInput() ?>
     </p>
 
-    <?php
-    $user_checkboxes = '<label class="control-label" for="users">Allowed users</label><ul class="list-group">';
-
-    foreach($all_users as $user){
-        $checkbox_status = null;
-        if(is_array($users_account_credential_ids) && in_array($model->id, $users_account_credential_ids[$user->id])){
-            $checked = true;
-        } else {
-            $checked = false;
-        }
-        $user_checkboxes .= '<li class="list-group-item">' . Html::checkbox('user-id', $checked, ['value' => $user->id]) . " $user->username</li>";
-    }
-
-    $user_checkboxes .= '</ul>';
-    ?>
-
-
-    <?= $user_checkboxes ?>
+    <label class="control-label" for="users">Allowed users</label>
+    <ul class="list-group">
+        <?= $user_checkboxes ?>
+    </ul>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

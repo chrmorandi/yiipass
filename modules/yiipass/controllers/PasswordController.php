@@ -146,30 +146,47 @@ class PasswordController extends Controller
             $user_controller = new UserController('PasswordController',
                                                     'app\modules\yiipass');
 
-            foreach ($post_request['User'] as $user) {
+            foreach ($post_request['allowed_users'] as $username=>$user_id) {
                 /**
                  * Add permission for password. Mark the permission name with
                  * "password-id" to be flexible about saving different types of
                  * permissions in future. "password-id-" can be later on
                  * replaced to the get only the id for further handling.
                  */
-                $user_controller->addPermissionToUser($user,
-                    'password-id-' . $post_request['Password']['id']);
+                $user_controller->addPermissionToUser($user_id,
+                    'password-id-' . $model->id);
             }
 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             // Enrich users array with account credentials info.
             $account_credential_ids = array();
-            foreach($all_users as &$user){
+            foreach($all_users as $user){
                 $users_account_credential_ids[$user->id] = $this->getAccountCredentialIdsSetForUser($user->id);
+            }
+
+            $user_checkboxes = '';
+
+            foreach($all_users as $user){
+                $checkbox_status = null;
+                if(is_array($users_account_credential_ids) &&
+                    in_array($model->id, $users_account_credential_ids[$user->id])){
+                    $checked = true;
+                } else {
+                    $checked = false;
+                }
+                $user_checkboxes .= $this->renderPartial('_user_checkboxes', [
+                                                    'checked' => $checked,
+                                                    'user_id' => $user->id,
+                                                    'username' => $user->username
+                                                ]);
             }
 
             return $this->render('update', [
                 'model' => $model,
                 'all_users' => $all_users,
                 'user_model' => $user_model,
-                'users_account_credential_ids' => $users_account_credential_ids
+                'user_checkboxes' => $user_checkboxes
             ]);
         }
     }

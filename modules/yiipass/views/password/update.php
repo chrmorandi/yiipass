@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = 'Update';
         'model' => $model,
         'all_users' => $all_users,
         'user_model' => $user_model,
-        'users_account_credential_ids' => $users_account_credential_ids
+        'user_checkboxes' => $user_checkboxes
     ]) ?>
 
 </div>
