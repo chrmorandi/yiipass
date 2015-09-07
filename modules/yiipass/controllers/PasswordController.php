@@ -184,8 +184,6 @@ class PasswordController extends Controller
 
             return $this->render('update', [
                 'model' => $model,
-                'all_users' => $all_users,
-                'user_model' => $user_model,
                 'user_checkboxes' => $user_checkboxes
             ]);
         }
