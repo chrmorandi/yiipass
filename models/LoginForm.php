@@ -2,13 +2,15 @@
 
 namespace app\models;
 
+use app\modules\yiipass\models\User;
 use Yii;
 use yii\base\Model;
+use \yii\web\IdentityInterface;
 
 /**
  * LoginForm is the model behind the login form.
  */
-class LoginForm extends Model
+class LoginForm extends Model implements IdentityInterface
 {
     public $username;
     public $password;
@@ -71,9 +73,64 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
+            $user = User::findOne(['username' => $this->username]);
+            $this->_user = self::findIdentity($user->id);
         }
 
         return $this->_user;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findIdentity($id)
+    {
+        return User::findOne(['id' => $id]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    /**
+     * Returns a key that can be used to check the validity of a given identity ID.
+     *
+     * The key should be unique for each individual user, and should be persistent
+     * so that it can be used to check the validity of the user identity.
+     *
+     * The space of such keys should be big enough to defeat potential identity attacks.
+     *
+     * This is required if [[User::enableAutoLogin]] is enabled.
+     * @return string a key that is used to check the validity of a given identity ID.
+     * @see validateAuthKey()
+     */
+    public function getAuthKey()
+    {
+        // TODO: Implement getAuthKey() method.
+    }
+
+    /**
+     * Validates the given auth key.
+     *
+     * This is required if [[User::enableAutoLogin]] is enabled.
+     * @param string $authKey the given auth key
+     * @return boolean whether the given auth key is valid.
+     * @see getAuthKey()
+     */
+    public function validateAuthKey($authKey)
+    {
+        // TODO: Implement validateAuthKey() method.
     }
 }

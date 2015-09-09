@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\modules\yiipass\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -60,8 +61,11 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        $model = new User();
+
+        $model_post = $model->load(Yii::$app->request->post());
+
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->user->login($model)) {
             return $this->goBack();
         } else {
             return $this->render('login', [
