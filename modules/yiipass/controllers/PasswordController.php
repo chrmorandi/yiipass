@@ -24,13 +24,13 @@ class PasswordController extends Controller
      * Sets the permissions for users, after password update form was
      * submitted.
      *
-     * @param $id
+     * @param $permission_id
      * @param $all_users
-     * @param $post_request
-     * @param $user_controller
-     * @param $model
+     * @internal param $post_request
+     * @internal param $user_controller
+     * @internal param $model
      */
-    private function setPermissionsForUsers($id, $all_users, $model)
+    private function setPermissionsForUsers($permission_id, $all_users)
     {
         $post_request = Yii::$app->request->post();
         $user_controller = new UserController('PasswordController',
@@ -42,7 +42,7 @@ class PasswordController extends Controller
                 in_array($user->id, $post_request['allowed_users']) &&
                 \Yii::$app->authManager
                     ->checkAccess($user->id,
-                        'password-id-' . $id) === false
+                        'password-id-' . $permission_id) === false
             ) {
                 /**
                  * Add permission for password. Mark the permission name with
@@ -51,7 +51,7 @@ class PasswordController extends Controller
                  * replaced to the get only the id for further handling.
                  */
                 $user_controller->addPermissionToUser($user->id,
-                    'password-id-' . $id);
+                    'password-id-' . $permission_id);
             }
 
             // Remove permission from user.
@@ -59,9 +59,9 @@ class PasswordController extends Controller
                     || !in_array($user->id, $post_request['allowed_users']))
                 && \Yii::$app->authManager
                     ->checkAccess($user->id,
-                        'password-id-' . $model->id) === true
+                        'password-id-' . $permission_id) === true
             ) {
-                $role_obj = \Yii::$app->authManager->getRole("password-id-$id-r4uid-$user->id");
+                $role_obj = \Yii::$app->authManager->getRole("password-id-$permission_id-r4uid-$user->id");
                 \Yii::$app->authManager->remove($role_obj);
             }
         }
@@ -168,7 +168,7 @@ class PasswordController extends Controller
                                 ->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $this->setPermissionsForUsers($model->id, $all_users, $model);
+            $this->setPermissionsForUsers($model->id, $all_users);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, false, $model);
@@ -195,7 +195,7 @@ class PasswordController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
-            $this->setPermissionsForUsers($id, $all_users, $model);
+            $this->setPermissionsForUsers($id, $all_users);
 
             \Yii::$app->getSession()->setFlash('success', 'Account credential successfully saved.');
 
@@ -227,7 +227,12 @@ class PasswordController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        $all_users = User::find()
+                                ->all();
+        $this->setPermissionsForUsers($id, $all_users);
+        $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
+        \Yii::$app->authManager->remove($permission);
+        \Yii::$app->getSession()->setFlash('success', 'Account credential successfully deleted.');
         return $this->redirect(['index']);
     }
 
