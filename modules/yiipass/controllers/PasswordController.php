@@ -17,6 +17,9 @@ use yii\filters\VerbFilter;
  */
 class PasswordController extends Controller
 {
+    // Use the main layout from yiipass module.
+    public $layout = 'main';
+
     /**
      * Sets the permissions for users, after password update form was
      * submitted.
@@ -27,8 +30,9 @@ class PasswordController extends Controller
      * @param $user_controller
      * @param $model
      */
-    private function setPermissionsForUsers($id, $all_users, $post_request, $model)
+    private function setPermissionsForUsers($id, $all_users, $model)
     {
+        $post_request = Yii::$app->request->post();
         $user_controller = new UserController('PasswordController',
             'app\modules\yiipass');
 
@@ -160,12 +164,17 @@ class PasswordController extends Controller
     public function actionCreate()
     {
         $model = new Password();
+        $all_users = User::find()
+                                ->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->setPermissionsForUsers($model->id, $all_users, $model);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+            $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, false, $model);
             return $this->render('create', [
                 'model' => $model,
+                'user_checkboxes' => $user_checkboxes
             ]);
         }
     }
@@ -185,9 +194,10 @@ class PasswordController extends Controller
                             ->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $post_request = Yii::$app->request->post();
 
-            $this->setPermissionsForUsers($id, $all_users, $post_request, $model);
+            $this->setPermissionsForUsers($id, $all_users, $model);
+
+            \Yii::$app->getSession()->setFlash('success', 'Account credential successfully saved.');
 
             // Redirect to listing with all account credentials.
             return $this->actionIndex();
@@ -198,22 +208,7 @@ class PasswordController extends Controller
                 $users_account_credential_ids[$user->id] = $this->getAccountCredentialIdsSetForUser($user->id);
             }
 
-            $user_checkboxes = '';
-
-            foreach($all_users as $user){
-                $checkbox_status = null;
-                if(is_array($users_account_credential_ids) &&
-                    in_array($model->id, $users_account_credential_ids[$user->id])){
-                    $checked = true;
-                } else {
-                    $checked = false;
-                }
-                $user_checkboxes .= $this->renderPartial('_user_checkboxes', [
-                                                    'checked' => $checked,
-                                                    'user_id' => $user->id,
-                                                    'username' => $user->username
-                                                ]);
-            }
+            $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, $users_account_credential_ids, $model);
 
             return $this->render('update', [
                 'model' => $model,
@@ -276,5 +271,36 @@ class PasswordController extends Controller
         }
 
         return $account_credential_ids;
+    }
+
+    /**
+     * Returns the html checkboxes for users in relation to account
+     * credentials.
+     *
+     * @param $all_users
+     * @param $users_account_credential_ids
+     * @param $model
+     * @return string
+     */
+    private function getHtmlCheckboxesForUsers($all_users, $users_account_credential_ids, $model)
+    {
+        $user_checkboxes = '';
+
+        foreach ($all_users as $user) {
+            $checkbox_status = null;
+            if (is_array($users_account_credential_ids) &&
+                in_array($model->id, $users_account_credential_ids[$user->id])
+            ) {
+                $checked = true;
+            } else {
+                $checked = false;
+            }
+            $user_checkboxes .= $this->renderPartial('_user_checkboxes', [
+                'checked' => $checked,
+                'user_id' => $user->id,
+                'username' => $user->username
+            ]);
+        }
+        return $user_checkboxes;
     }
 }

@@ -13,7 +13,7 @@ YiiPassAsset::register($this);
 /* @var $searchModel app\models\PasswordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Passwords';
+$this->title = 'Account Credentials Overview';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="password-index">

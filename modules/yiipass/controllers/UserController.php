@@ -15,6 +15,9 @@ use yii\filters\VerbFilter;
  */
 class UserController extends Controller
 {
+    // Use the main layout from yiipass module.
+    public $layout = 'main';
+
     public function behaviors()
     {
         return [
