@@ -27,8 +27,11 @@ class PasswordController extends Controller
      * @param $user_controller
      * @param $model
      */
-    private static function setPermissionsForUsers($id, $all_users, $post_request, $user_controller, $model)
+    private function setPermissionsForUsers($id, $all_users, $post_request, $model)
     {
+        $user_controller = new UserController('PasswordController',
+            'app\modules\yiipass');
+
         foreach ($all_users as $user) {
             // Add permission to user.
             if (isset($post_request['allowed_users']) &&
@@ -184,12 +187,10 @@ class PasswordController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $post_request = Yii::$app->request->post();
 
-            $user_controller = new UserController('PasswordController',
-                                                    'app\modules\yiipass');
+            $this->setPermissionsForUsers($id, $all_users, $post_request, $model);
 
-            self::setPermissionsForUsers($id, $all_users, $post_request, $user_controller, $model);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+            // Redirect to listing with all account credentials.
+            return $this->actionIndex();
         } else {
             // Enrich users array with account credentials info.
             $account_credential_ids = array();
