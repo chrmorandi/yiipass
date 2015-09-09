@@ -204,7 +204,6 @@ class UserController extends Controller
         if(self::authManager()->getPermission($permission_name) == NULL) {
             $this->createPermission($permission_name, 'The permission for one account\'s credentials data.');
         }
-
         $role = self::authManager()->createRole($permission_name . '-r4uid-' . $user_id);
         // add parent item.
         self::authManager()->add($role);

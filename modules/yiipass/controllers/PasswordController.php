@@ -17,6 +17,49 @@ use yii\filters\VerbFilter;
  */
 class PasswordController extends Controller
 {
+    /**
+     * Sets the permissions for users, after password update form was
+     * submitted.
+     *
+     * @param $id
+     * @param $all_users
+     * @param $post_request
+     * @param $user_controller
+     * @param $model
+     */
+    private static function setPermissionsForUsers($id, $all_users, $post_request, $user_controller, $model)
+    {
+        foreach ($all_users as $user) {
+            // Add permission to user.
+            if (isset($post_request['allowed_users']) &&
+                in_array($user->id, $post_request['allowed_users']) &&
+                \Yii::$app->authManager
+                    ->checkAccess($user->id,
+                        'password-id-' . $id) === false
+            ) {
+                /**
+                 * Add permission for password. Mark the permission name with
+                 * "password-id" to be flexible about saving different types of
+                 * permissions in future. "password-id-" can be later on
+                 * replaced to the get only the id for further handling.
+                 */
+                $user_controller->addPermissionToUser($user->id,
+                    'password-id-' . $id);
+            }
+
+            // Remove permission from user.
+            if ((!isset($post_request['allowed_users'])
+                    || !in_array($user->id, $post_request['allowed_users']))
+                && \Yii::$app->authManager
+                    ->checkAccess($user->id,
+                        'password-id-' . $model->id) === true
+            ) {
+                $role_obj = \Yii::$app->authManager->getRole("password-id-$id-r4uid-$user->id");
+                \Yii::$app->authManager->remove($role_obj);
+            }
+        }
+    }
+
     public function behaviors()
     {
         return [
@@ -135,8 +178,6 @@ class PasswordController extends Controller
     {
         $model = $this->findModel($id);
 
-        $user_model = new User();
-
         $all_users = User::find()
                             ->all();
 
@@ -146,16 +187,7 @@ class PasswordController extends Controller
             $user_controller = new UserController('PasswordController',
                                                     'app\modules\yiipass');
 
-            foreach ($post_request['allowed_users'] as $username=>$user_id) {
-                /**
-                 * Add permission for password. Mark the permission name with
-                 * "password-id" to be flexible about saving different types of
-                 * permissions in future. "password-id-" can be later on
-                 * replaced to the get only the id for further handling.
-                 */
-                $user_controller->addPermissionToUser($user_id,
-                    'password-id-' . $model->id);
-            }
+            self::setPermissionsForUsers($id, $all_users, $post_request, $user_controller, $model);
 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
