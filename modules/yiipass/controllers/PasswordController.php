@@ -88,6 +88,9 @@ class PasswordController extends Controller
      */
     public function actionDownloadPasswordsAsKeePassXml()
     {
+        if (Yii::$app->user->isGuest === true) {
+            return $this->redirect(['/site/login']);
+        }
 
         $all_passwords = Password::find()
             ->asArray()
@@ -110,6 +113,11 @@ class PasswordController extends Controller
      */
     public function actionUploadNewXml()
     {
+        if (Yii::$app->user->isGuest === true) {
+            return $this->redirect(['/site/login']);
+        }
+
+
         $model = new XmlUploadForm();
 
         if (Yii::$app->request->isPost) {
@@ -133,6 +141,10 @@ class PasswordController extends Controller
      */
     public function actionIndex()
     {
+        if (Yii::$app->user->isGuest === true) {
+            return $this->redirect(['/site/login']);
+        }
+
         $searchModel = new PasswordSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -140,6 +152,7 @@ class PasswordController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+
     }
 
     /**
@@ -150,6 +163,11 @@ class PasswordController extends Controller
      */
     public function actionView($id)
     {
+        if (Yii::$app->user->isGuest === true) {
+            return $this->redirect(['/site/login']);
+        }
+
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -163,6 +181,11 @@ class PasswordController extends Controller
      */
     public function actionCreate()
     {
+        if (Yii::$app->user->isGuest === true) {
+            return $this->redirect(['/site/login']);
+        }
+
+
         $model = new Password();
         $all_users = User::find()
                                 ->all();
@@ -188,6 +211,10 @@ class PasswordController extends Controller
      */
     public function actionUpdate($id)
     {
+        if (Yii::$app->user->isGuest === true) {
+            return $this->redirect(['/site/login']);
+        }
+
         $model = $this->findModel($id);
 
         $all_users = User::find()
@@ -226,6 +253,11 @@ class PasswordController extends Controller
      */
     public function actionDelete($id)
     {
+        if (Yii::$app->user->isGuest === true) {
+            return $this->redirect(['/site/login']);
+        }
+
+
         $this->findModel($id)->delete();
         $all_users = User::find()
                                 ->all();

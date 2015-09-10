@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\modules\yiipass\controllers\PasswordController;
+use app\modules\yiipass\models\Password;
 use app\modules\yiipass\models\User;
 use Yii;
 use yii\filters\AccessControl;
@@ -48,28 +50,34 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex()
-    {
-        $import_xml_controller = new ImportXmlController();
-        $xml = $import_xml_controller->get();
-        return $this->render('index', array('xml' => $xml));
-    }
-
+    /**
+     * The login form.
+     *
+     * @return string|\yii\web\Response
+     * @throws \yii\base\InvalidConfigException
+     */
     public function actionLogin()
     {
-        if (!\Yii::$app->user->isGuest) {
-            return $this->goHome();
+        // Before filled login form.
+        if(!isset(Yii::$app->request->post()['LoginForm']['username'])){
+            return $this->render('login', [
+                'model' => new LoginForm(),
+            ]);
         }
 
-        $model = new User();
+        $identity = User::findByUsername([Yii::$app->request->post()['LoginForm']['username']]);
+        $inserted_password = Yii::$app->request->post()['LoginForm']['password'];
 
-        $model_post = $model->load(Yii::$app->request->post());
-
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->user->login($model)) {
-            return $this->goBack();
+        // Successful login.
+        if (Yii::$app->security->validatePassword($inserted_password, $identity->password_hash)) {
+            Yii::$app->user->login($identity);
+            return Yii::$app->runAction('/yiipass/password/index');
         } else {
+            // Login error.
+            Yii::$app->session->setFlash('error', 'Wrong password. Please check.');
+
             return $this->render('login', [
-                'model' => $model,
+                'model' => new LoginForm()
             ]);
         }
     }

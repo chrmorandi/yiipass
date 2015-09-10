@@ -20,8 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
-
     <?php if(Yii::$app->session->hasFlash('success')){ ?>
         <div class="alert alert-success" role="alert">
             <?= Yii::$app->session->getFlash('success'); ?>
