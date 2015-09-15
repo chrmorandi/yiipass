@@ -16,6 +16,7 @@ use Yii;
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $is_admin
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -51,7 +52,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             [['username', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
-            [['status', 'created_at', 'updated_at'], 'integer'],
+            [['status', 'created_at', 'updated_at', 'is_admin'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255]
         ];
     }
@@ -71,6 +72,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'is_admin' => 'Is Admin'
         ];
     }
 
