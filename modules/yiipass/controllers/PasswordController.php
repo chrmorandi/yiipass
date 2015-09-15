@@ -146,7 +146,9 @@ class PasswordController extends Controller
         }
 
         $searchModel = new PasswordSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $account_credential_ids = $this->getAccountCredentialIdsSetForUser(Yii::$app->user->id);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
 
         return $this->render('index', [
             'searchModel' => $searchModel,

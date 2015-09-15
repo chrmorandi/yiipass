@@ -39,7 +39,7 @@ class PasswordSearch extends Password
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $account_credential_ids = null)
     {
         $query = Password::find();
 
@@ -69,6 +69,16 @@ class PasswordSearch extends Password
             ->andFilterWhere(['like', 'password', $this->password])
             ->andFilterWhere(['like', 'comment', $this->comment])
             ->andFilterWhere(['like', 'url', $this->url]);
+
+        if (!empty($account_credential_ids)) {
+            /*
+            $ids = '';
+            foreach ($account_credential_ids as $key=>$value) {
+                $ids .= "$value, ";
+            }
+            */
+            $query->andFilterWhere(['in', 'id', $account_credential_ids]);
+        }
 
         return $dataProvider;
     }
