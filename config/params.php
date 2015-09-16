@@ -2,4 +2,5 @@
 
 return [
     'adminEmail' => 'admin@example.com',
+    'system_email' => 'system@intellipass.it'
 ];

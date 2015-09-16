@@ -52,6 +52,8 @@ class PasswordController extends Controller
                  */
                 $user_controller->addPermissionToUser($user->id,
                     'password-id-' . $permission_id);
+
+                $this->notifyUser($user, $permission_id, 'assignment');
             }
 
             // Remove permission from user.
@@ -63,7 +65,44 @@ class PasswordController extends Controller
             ) {
                 $role_obj = \Yii::$app->authManager->getRole("password-id-$permission_id-r4uid-$user->id");
                 \Yii::$app->authManager->remove($role_obj);
+
+                $this->notifyUser($user, $permission_id, 'removal');
             }
+        }
+    }
+
+    /**
+     * Notify user via email about password assignment or removal.
+     *
+     * @param $user_id
+     * @param $permission_id
+     * return null
+     */
+    private function notifyUser($user, $permission_id, $action) {
+
+        $password = Password::findOne($permission_id);
+
+        $mailer = Yii::$app->mailer->compose()
+                            ->setFrom(Yii::$app->params['system_email'])
+                            ->setTo($user->email);
+
+        if($action == 'assignment'){
+            $mailer->setSubject("Assignment for Account Credential '$password->title'")
+                                ->setTextBody("You're now allowed to access the account credential " .
+                                    "with the title '$password->title'. This is an " .
+                                    "automatic eMail from the account credentials management system." .
+                                    "Don't reply on this eMail.")
+                                ->send();
+        }
+
+        if($action == 'removal'){
+            $mailer->setSubject("Removal for Account Credential '$password->title'")
+                                ->setTextBody("The access for the account credential " .
+                                    "with the title '$password->title' was removed
+                                    from your account. This is an automatic eMail " .
+                                    "from the account credentials management system." .
+                                    "Don't reply on this eMail.")
+                                ->send();
         }
     }
 

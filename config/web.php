@@ -45,7 +45,7 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => false,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -72,7 +72,7 @@ $config = [
             ),
         ],
     ],
-    'params' => $params,
+    'params' => $params
 ];
 
 if (YII_ENV_DEV) {
