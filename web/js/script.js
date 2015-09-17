@@ -61,7 +61,7 @@ document.getElementById("toggle_password").onclick = function() {
         document.getElementById("toggle_password").innerHTML = 'Hide password';
     } else {
         document.getElementById("password-password").setAttribute("type", "password");
-        document.getElementById("toggle_password").innerHTML = 'Show password';
+        document.getElementById("toggle_password").innerHTML = 'Show Password';
     }
 }
 

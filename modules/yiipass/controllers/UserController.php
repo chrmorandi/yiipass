@@ -95,8 +95,6 @@ class UserController extends Controller
 
             $model->save();
 
-            $found_model = $this->findModel($model->id);
-
             return $this->render('view', [
                 'model' => $this->findModel($model->id),
             ]);

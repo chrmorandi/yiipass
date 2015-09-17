@@ -34,10 +34,8 @@ use yii\helpers\BaseHtml;
         <?= $form->field($model, 'expire')->textInput() ?>
     </p>
 
-    <label class="control-label" for="users">Allowed users</label>
-    <ul class="list-group">
-        <?= $user_checkboxes ?>
-    </ul>
+    <?php // Will be displayed only, if user is admin. ?>
+    <?php echo $user_checkboxes ?: $user_checkboxes; ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

@@ -78,31 +78,32 @@ class PasswordController extends Controller
      * @param $permission_id
      * return null
      */
-    private function notifyUser($user, $permission_id, $action) {
+    private function notifyUser($user, $permission_id, $action)
+    {
 
         $password = Password::findOne($permission_id);
 
         $mailer = Yii::$app->mailer->compose()
-                            ->setFrom(Yii::$app->params['system_email'])
-                            ->setTo($user->email);
+            ->setFrom(Yii::$app->params['system_email'])
+            ->setTo($user->email);
 
-        if($action == 'assignment'){
+        if ($action == 'assignment') {
             $mailer->setSubject("Assignment for Account Credential '$password->title'")
-                                ->setTextBody("You're now allowed to access the account credential " .
-                                    "with the title '$password->title'. This is an " .
-                                    "automatic eMail from the account credentials management system." .
-                                    "Don't reply on this eMail.")
-                                ->send();
+                ->setTextBody("You're now allowed to access the account credential " .
+                    "with the title '$password->title'. This is an " .
+                    "automatic eMail from the account credentials management system." .
+                    "Don't reply on this eMail.")
+                ->send();
         }
 
-        if($action == 'removal'){
+        if ($action == 'removal') {
             $mailer->setSubject("Removal for Account Credential '$password->title'")
-                                ->setTextBody("The access for the account credential " .
-                                    "with the title '$password->title' was removed
+                ->setTextBody("The access for the account credential " .
+                    "with the title '$password->title' was removed
                                     from your account. This is an automatic eMail " .
-                                    "from the account credentials management system." .
-                                    "Don't reply on this eMail.")
-                                ->send();
+                    "from the account credentials management system." .
+                    "Don't reply on this eMail.")
+                ->send();
         }
     }
 
@@ -186,7 +187,7 @@ class PasswordController extends Controller
 
         $searchModel = new PasswordSearch();
 
-        if(Yii::$app->user->getIdentity()->is_admin !== 1){
+        if (Yii::$app->user->getIdentity()->is_admin !== 1) {
             $account_credential_ids = $this->getAccountCredentialIdsSetForUser(Yii::$app->user->id);
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
         } else {
@@ -233,17 +234,20 @@ class PasswordController extends Controller
 
         $model = new Password();
         $all_users = User::find()
-                                ->all();
+                            ->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $this->setPermissionsForUsers($model->id, $all_users);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, false, $model);
-            return $this->render('create', [
-                'model' => $model,
-                'user_checkboxes' => $user_checkboxes
-            ]);
+            $elements_to_render = array('model' => $model);
+
+            if (Yii::$app->user->getIdentity()->is_admin == 1) {
+                $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, false, $model);
+                $elements_to_render['user_checkboxes'] = $user_checkboxes;
+            }
+
+            return $this->render('create', $elements_to_render);
         }
     }
 
@@ -263,7 +267,7 @@ class PasswordController extends Controller
         $model = $this->findModel($id);
 
         $all_users = User::find()
-                            ->all();
+            ->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
@@ -273,19 +277,21 @@ class PasswordController extends Controller
 
             // Redirect to listing with all account credentials.
             return $this->actionIndex();
+
         } else {
-            // Enrich users array with account credentials info.
-            $account_credential_ids = array();
-            foreach($all_users as $user){
-                $users_account_credential_ids[$user->id] = $this->getAccountCredentialIdsSetForUser($user->id);
+
+            $elements_to_render = array('model' => $model);
+
+            if (Yii::$app->user->getIdentity()->is_admin == 1) {
+                // Enrich users array with account credentials info.
+                foreach ($all_users as $user) {
+                    $users_account_credential_ids[$user->id] = $this->getAccountCredentialIdsSetForUser($user->id);
+                }
+                $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, $users_account_credential_ids, $model);
+                $elements_to_render['user_checkboxes'] = $user_checkboxes;
             }
 
-            $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, $users_account_credential_ids, $model);
-
-            return $this->render('update', [
-                'model' => $model,
-                'user_checkboxes' => $user_checkboxes
-            ]);
+            return $this->render('update', $elements_to_render);
         }
     }
 
@@ -305,7 +311,7 @@ class PasswordController extends Controller
 
         $this->findModel($id)->delete();
         $all_users = User::find()
-                                ->all();
+            ->all();
         $this->setPermissionsForUsers($id, $all_users);
         $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
         \Yii::$app->authManager->remove($permission);
@@ -338,16 +344,17 @@ class PasswordController extends Controller
      * @param $user_id
      * @return array
      */
-    public function getAccountCredentialIdsSetForUser($user_id){
+    public function getAccountCredentialIdsSetForUser($user_id)
+    {
 
         $user_controller = new UserController('PasswordController',
-                                                'app\modules\yiipass');
+            'app\modules\yiipass');
         $permissions = $user_controller->getPermissionsForUser($user_id);
 
         $account_credential_ids = array();
 
-        foreach($permissions as $permission){
-            if(is_numeric(strpos($permission->name, 'password-id-'))){
+        foreach ($permissions as $permission) {
+            if (is_numeric(strpos($permission->name, 'password-id-'))) {
                 $account_credential_ids[] = str_replace('password-id-', '', $permission->name);
             }
         }
@@ -377,12 +384,21 @@ class PasswordController extends Controller
             } else {
                 $checked = false;
             }
+
+            $username = ($user->is_admin == 1) ? $user->username . ' (admin)' : $user->username;
+
             $user_checkboxes .= $this->renderPartial('_user_checkboxes', [
                 'checked' => $checked,
                 'user_id' => $user->id,
-                'username' => $user->username
+                'username' => $username
             ]);
         }
+
+        // Wrap user checkboxes into label and ul dom-element.
+        $user_checkboxes = $this->renderPartial('_wrapper_user_checkboxes', [
+            'user_checkboxes' => $user_checkboxes
+        ]);
+
         return $user_checkboxes;
     }
 }

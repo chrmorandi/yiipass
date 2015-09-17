@@ -14,9 +14,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
+    <?php
+    $elements_to_render['model'] = $model;
+    ?>
+
+    <?=
+    $this->render('_form', [
         'model' => $model,
-        'user_checkboxes' => $user_checkboxes
+        'user_checkboxes' => isset($user_checkboxes) ? $user_checkboxes : false
     ]) ?>
 
 </div>
