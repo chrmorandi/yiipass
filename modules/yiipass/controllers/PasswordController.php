@@ -142,7 +142,9 @@ class PasswordController extends Controller
         $xml = $xml_service->createKeePassValidXml($all_passwords);
 
         // Download the passwords XML file.
-        \Yii::$app->getResponse()->sendContentAsFile($xml, 'passwords.xml');
+        \Yii::$app
+            ->getResponse()
+            ->sendContentAsFile($xml, 'passwords.xml');
 
     }
 
@@ -287,7 +289,11 @@ class PasswordController extends Controller
                 foreach ($all_users as $user) {
                     $users_account_credential_ids[$user->id] = $this->getAccountCredentialIdsSetForUser($user->id);
                 }
-                $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, $users_account_credential_ids, $model);
+                $user_checkboxes = $this->getHtmlCheckboxesForUsers(
+                    $all_users,
+                    $users_account_credential_ids,
+                    $model
+                );
                 $elements_to_render['user_checkboxes'] = $user_checkboxes;
             }
 
@@ -308,14 +314,18 @@ class PasswordController extends Controller
             return $this->redirect(['/site/login']);
         }
 
-
         $this->findModel($id)->delete();
+
         $all_users = User::find()
             ->all();
         $this->setPermissionsForUsers($id, $all_users);
         $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
-        \Yii::$app->authManager->remove($permission);
-        \Yii::$app->getSession()->setFlash('success', 'Account credential successfully deleted.');
+        if ($permission !== null) {
+            \Yii::$app->authManager->remove($permission);
+        }
+
+        \Yii::$app->getSession()
+            ->setFlash('success', 'Account credential successfully deleted.');
         return $this->redirect(['index']);
     }
 
