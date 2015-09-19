@@ -24,6 +24,7 @@ AppAsset::register($this);
 
 <?php $this->beginBody() ?>
     <div class="wrap">
+
         <?php
             NavBar::begin([
                 'brandLabel' => 'YiiPass',
@@ -40,7 +41,7 @@ AppAsset::register($this);
                     Yii::$app->user->isGuest ?
                         ['label' => 'Login', 'url' => ['/site/login']] :
                         ['label' => 'Account Credentials', 'url' => ['/']],
-                        ['label' => 'Users', 'url' => ['/users']],
+                        (Yii::$app->user->identity->is_admin == 1) ? ['label' => 'Users', 'url' => ['/users']] : '',
                         ['label' => 'Logout (' . Yii::$app->user->identity->username . ')',
                             'url' => ['/site/logout'],
                             'linkOptions' => ['data-method' => 'post']]
