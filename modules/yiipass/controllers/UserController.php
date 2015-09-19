@@ -152,7 +152,7 @@ class UserController extends Controller
      * @param $description
      * @throws \yii\base\InvalidConfigException
      */
-    public function createPermission($name, $description){
+    public static function createPermission($name, $description){
         $auth = Yii::$app->authManager;
 
         $new_permission = $auth->createPermission($name);
@@ -200,20 +200,50 @@ class UserController extends Controller
      * @param $permission_name
      * @throws \Exception
      */
-    public function addPermissionToUser($user_id, $permission_name){
+    public static function addPermissionToUser($user_id, $permission_name){
+        if (\Yii::$app->authManager
+            ->checkAccess($user_id,
+                $permission_name) === false) {
 
-        if(self::authManager()->getPermission($permission_name) == NULL) {
-            $this->createPermission($permission_name, 'The permission for one account\'s credentials data.');
+            if (self::authManager()->getPermission($permission_name) == NULL) {
+                self::createPermission($permission_name, 'The permission for one account\'s credentials data.');
+            }
+
+            $role = self::authManager()->createRole($permission_name . '-r4uid-' . $user_id);
+
+            // add parent item.
+            self::authManager()->add($role);
+            $permission = self::authManager()->getPermission($permission_name);
+            // add child item.
+            self::authManager()->addChild($role, $permission);
+
+            // assign role to user by id.
+            self::authManager()->assign($role, $user_id);
         }
-        $role = self::authManager()->createRole($permission_name . '-r4uid-' . $user_id);
-        // add parent item.
-        self::authManager()->add($role);
-        $permission = self::authManager()->getPermission($permission_name);
-        // add child item.
-        self::authManager()->addChild($role, $permission);
+    }
 
-        // assign role to user by id.
-        self::authManager()->assign($role, $user_id);
+    /**
+     * This method removes a permission from an user.
+     *
+     * Please note: It's speciality relies in the fact that 1 permission
+     * has "1 role". Because the permissions are assigned to users and
+     * not to roles. Yii's role system is used with a little work-around here.
+     * For this "-r4uid- + the user id is added to the role name.
+     *
+     * @param $user_id
+     * @param $permission_name
+     *
+     * @return null
+     */
+    public static function removePermissionFromUser($user_id, $permission_name)
+    {
+        if (\Yii::$app->authManager
+                ->checkAccess($user_id,
+                    $permission_name) === true
+        ) {
+            $role_obj = \Yii::$app->authManager->getRole("$permission_name-r4uid-$user_id");
+            \Yii::$app->authManager->remove($role_obj);
+        }
     }
 
     /**

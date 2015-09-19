@@ -33,6 +33,14 @@ AppAsset::register($this);
                     'class' => 'navbar-inverse navbar-fixed-top',
                 ],
             ]);
+
+            // Add admin info to username in navigation bar.
+            if(Yii::$app->user->identity->is_admin == 1) {
+                $displayed_username = Yii::$app->user->identity->username . ' - admin';
+            } else {
+                $displayed_username = Yii::$app->user->identity->username;
+            }
+
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => [
@@ -42,7 +50,7 @@ AppAsset::register($this);
                         ['label' => 'Login', 'url' => ['/site/login']] :
                         ['label' => 'Account Credentials', 'url' => ['/']],
                         (Yii::$app->user->identity->is_admin == 1) ? ['label' => 'Users', 'url' => ['/users']] : '',
-                        ['label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+                        ['label' => 'Logout (' . $displayed_username . ')',
                             'url' => ['/site/logout'],
                             'linkOptions' => ['data-method' => 'post']]
                 ],
