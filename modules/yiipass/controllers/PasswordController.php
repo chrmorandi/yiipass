@@ -30,7 +30,7 @@ class PasswordController extends Controller
      *
      * @return null
      */
-    private function updatePermissionsForUsers($permission_id, $allowed_users = false)
+    private function updatePermissionsAndNotify($permission_id, $allowed_users = false)
     {
         $all_users = User::find()
             ->all();
@@ -265,7 +265,7 @@ class PasswordController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             if (isset(Yii::$app->request->post()['allowed_users'])) {
-                $this->updatePermissionsForUsers(
+                $this->updatePermissionsAndNotify(
                     $id,
                     Yii::$app->request->post()['allowed_users']
                 );
@@ -314,7 +314,7 @@ class PasswordController extends Controller
 
         $all_users = User::find()
             ->all();
-        $this->updatePermissionsForUsers($id, $all_users);
+        $this->updatePermissionsAndNotify($id, $all_users);
         $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
         if ($permission !== null) {
             \Yii::$app->authManager->remove($permission);
