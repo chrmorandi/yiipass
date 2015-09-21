@@ -124,10 +124,26 @@ class PasswordController extends Controller
             ->asArray()
             ->all();
 
+        $allowed_passwords = array();
+
+        foreach ($all_passwords as $password) {
+
+            $user_id = Yii::$app->user->identity->id;
+
+            $is_admin = Yii::$app->user->identity->is_admin;
+
+            if (Yii::$app->authManager
+                    ->checkAccess($user_id,
+                        'password-id-' . $password['id']) === true || $is_admin == 1) {
+                $allowed_passwords[] = $password;
+            }
+
+        }
+
         /* @var $xml_service \app\modules\yiipass\services\SimpleKeePassXmlService */
         $xml_service = \Yii::$app->getModule('yiipass')->get('SimpleKeePassXmlService');
 
-        $xml = $xml_service->createKeePassValidXml($all_passwords);
+        $xml = $xml_service->createKeePassValidXml($allowed_passwords);
 
         // Download the passwords XML file.
         \Yii::$app
