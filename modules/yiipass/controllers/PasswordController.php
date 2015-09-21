@@ -22,15 +22,15 @@ class PasswordController extends Controller
 
     /**
      * Sets the permissions for users, after password update form was
-     * submitted.
+     * submitted. This method also notifies users.
      *
      * @param $permission_id int
      * @param $all_users array
-     * @param $allowed_users array
+     * @param $allowed_users array|false
      *
      * @return null
      */
-    private function setPermissionsForUsers($permission_id, $allowed_users = false)
+    private function updatePermissionsForUsers($permission_id, $allowed_users = false)
     {
         $all_users = User::find()
             ->all();
@@ -38,9 +38,8 @@ class PasswordController extends Controller
         foreach ($all_users as $user) {
             if (isset($allowed_users) && in_array($user->id, $allowed_users)) {
                UserController::addPermissionToUser(
-                   'password-id-' . $permission_id,
-                   $allowed_users,
-                   $user
+                   $user->id,
+                   'password-id-' . $permission_id
                );
             }
 
@@ -226,9 +225,9 @@ class PasswordController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             // The user which has created the password can access it.
-            $this->setPermissionsForUsers(
+            UserController::addPermissionToUser(
                 $model->id,
-                ['0' => Yii::$app->user->id]
+                'password-id-' . Yii::$app->user->id
             );
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -265,11 +264,12 @@ class PasswordController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
-            $this->setPermissionsForUsers(
-                $id,
-                $all_users,
-                Yii::$app->request->post()['allowed_users']
-            );
+            if (isset(Yii::$app->request->post()['allowed_users'])) {
+                $this->updatePermissionsForUsers(
+                    $id,
+                    Yii::$app->request->post()['allowed_users']
+                );
+            }
 
             \Yii::$app->getSession()->setFlash('success', 'Account credential successfully saved.');
 
@@ -314,7 +314,7 @@ class PasswordController extends Controller
 
         $all_users = User::find()
             ->all();
-        $this->setPermissionsForUsers($id, $all_users);
+        $this->updatePermissionsForUsers($id, $all_users);
         $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
         if ($permission !== null) {
             \Yii::$app->authManager->remove($permission);
