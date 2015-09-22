@@ -66,6 +66,16 @@ class SiteController extends Controller
         }
 
         $identity = User::findByUsername([Yii::$app->request->post()['LoginForm']['username']]);
+        // User not found by username.
+        if ($identity == null){
+            // Login error.
+            Yii::$app->session->setFlash('error', 'Wrong username. Please check.');
+
+            return $this->render('login', [
+                'model' => new LoginForm()
+            ]);
+        }
+
         $inserted_password = Yii::$app->request->post()['LoginForm']['password'];
 
         // Successful login.

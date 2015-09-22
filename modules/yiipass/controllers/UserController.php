@@ -256,8 +256,31 @@ class UserController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $arr_request = Yii::$app->request->post()['User'];
+
+            $this->formInputDataValidation($arr_request, $model);
+
+            $model->auth_key = Yii::$app->security->generateRandomString();
+
+            $model->email = $arr_request['email'];
+
+            $model->created_at = time();
+
+            $model->updated_at = time();
+
+            $model->username = $arr_request['username'];
+
+            $model->password_hash = Yii::$app->security->generatePasswordHash($arr_request['password']);
+
+            $model->status = 10;
+
+            $model->save();
+
+            return $this->render('view', [
+                'model' => $this->findModel($model->id),
+            ]);
         } else {
             return $this->render('update', [
                 'model' => $model
