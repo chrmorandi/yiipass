@@ -193,6 +193,7 @@ class PasswordController extends Controller
             $account_credential_ids = $this->getAccountCredentialIdsSetForUser(Yii::$app->user->id);
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
         } else {
+            die('is admin');
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         }
 
