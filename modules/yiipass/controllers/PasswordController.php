@@ -55,10 +55,6 @@ class PasswordController extends Controller
         }
     }
 
-    public function removePermissionFromUserAndNotify() {
-        // @TODO
-    }
-
     /**
      * Notify user via email about password assignment or removal.
      *
@@ -380,6 +376,8 @@ class PasswordController extends Controller
                 $account_credential_ids[] = str_replace('password-id-', '', $permission->name);
             }
         }
+
+        var_dump($account_credential_ids);
 
         return $account_credential_ids;
     }
