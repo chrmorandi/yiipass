@@ -377,7 +377,7 @@ class PasswordController extends Controller
             }
         }
 
-        var_dump($account_credential_ids);
+        die($account_credential_ids);
 
         return $account_credential_ids;
     }
