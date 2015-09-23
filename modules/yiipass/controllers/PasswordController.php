@@ -30,13 +30,14 @@ class PasswordController extends Controller
      *
      * @return null
      */
-    private function updatePermissionsAndNotify($permission_id, $allowed_users = false)
+    private function updatePermissionsAndNotify($permission_id)
     {
         $all_users = User::find()
             ->all();
 
         foreach ($all_users as $user) {
-            if (isset($allowed_users) && in_array($user->id, $allowed_users)) {
+            if (isset(Yii::$app->request->post()['allowed_users'])
+                && in_array($user->id, Yii::$app->request->post()['allowed_users'])) {
                UserController::addPermissionToUser(
                    $user->id,
                    'password-id-' . $permission_id
@@ -44,7 +45,8 @@ class PasswordController extends Controller
             }
 
             // Remove permission from user.
-            if (!isset($allowed_users) || !in_array($user->id, $allowed_users)) {
+            if (!isset(Yii::$app->request->post()['allowed_users'])
+                || !in_array($user->id, Yii::$app->request->post()['allowed_users'])) {
                 UserController::removePermissionFromUser(
                     $user->id,
                     'password-id-' . $permission_id
@@ -276,12 +278,7 @@ class PasswordController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
-            if (isset(Yii::$app->request->post()['allowed_users'])) {
-                $this->updatePermissionsAndNotify(
-                    $id,
-                    Yii::$app->request->post()['allowed_users']
-                );
-            }
+            $this->updatePermissionsAndNotify($id);
 
             \Yii::$app->getSession()->setFlash('success', 'Account credential successfully saved.');
 
