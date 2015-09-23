@@ -44,37 +44,45 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <?= CustomGridViewService::widget([
+    <?php
+    $arr_widget = [
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\CheckboxColumn'],
-
             'title',
             'group',
             'lastaccess',
 
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{update} {delete} {open_url} {copy_username} {copy_password}',
-                'buttons' => [
-                    'open_url' => function($url, $model, $key){
-                        if($model->url !== ''){
-                            return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
-                        }
-                    },
-                    'copy_username' => function($url, $model, $key){
-                        if($model->username !== ''){
-                            return '<button type="button" class="copy_username copy_button" data-clipboard-text="' . $model->username . '" title="Click to copy me.">Copy Username</button>';
-                        }
-                    },
-                    'copy_password' => function($url, $model, $key){
-                        if($model->password !== ''){
-                            return '<button type="button" class="copy_password copy_button" data-clipboard-text="' . $model->password . '" title="Click to copy me.">Copy Password</button>';
-                        }
-                    }
-                ]
+             'template' => '{update} {delete} {open_url} {copy_username} {copy_password}',
+             'buttons' => [
+                 'open_url' => function($url, $model, $key){
+                     if($model->url !== ''){
+                         return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
+                     }
+                 },
+                 'copy_username' => function($url, $model, $key){
+                     if($model->username !== ''){
+                         return '<button type="button" class="copy_username copy_button" data-clipboard-text="' . $model->username . '" title="Click to copy me.">Copy Username</button>';
+                     }
+                 },
+                 'copy_password' => function($url, $model, $key){
+                     if($model->password !== ''){
+                         return '<button type="button" class="copy_password copy_button" data-clipboard-text="' . $model->password . '" title="Click to copy me.">Copy Password</button>';
+                     }
+                 }
+             ]
             ],
         ],
-    ]); ?>
+    ];
+
+    // If user is admin, set checkbox column at the beginning of the columns.
+    if (Yii::$app->user->identity->is_admin){
+        array_unshift($arr_widget['columns'], ['class' => 'yii\grid\CheckboxColumn']);
+    }
+
+    ?>
+
+    <?= CustomGridViewService::widget($arr_widget); ?>
 
 </div>
