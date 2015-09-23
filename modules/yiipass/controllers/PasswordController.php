@@ -189,7 +189,7 @@ class PasswordController extends Controller
 
         $searchModel = new PasswordSearch();
 
-        if (Yii::$app->user->getIdentity()->is_admin !== '1') {
+        if (intval(Yii::$app->user->getIdentity()->is_admin) !== 1) {
             $account_credential_ids = $this->getAccountCredentialIdsSetForUser(Yii::$app->user->id);
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
         } else {

@@ -66,6 +66,7 @@ class SiteController extends Controller
         }
 
         $identity = User::findByUsername([Yii::$app->request->post()['LoginForm']['username']]);
+
         // User not found by username.
         if ($identity == null){
             // Login error.
