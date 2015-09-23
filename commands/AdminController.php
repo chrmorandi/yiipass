@@ -7,24 +7,22 @@
 
 namespace app\commands;
 
+use app\modules\yiipass\controllers\PasswordController;
 use yii\console\Controller;
 
 /**
- * This command echoes the first argument that you have entered.
- *
- * This command is provided as an example for you to learn how to create console commands.
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
+ * This commands offers some actions for administration.
  */
-class HelloController extends Controller
+class AdminController extends Controller
 {
     /**
-     * This command echoes what you have entered as the message.
-     * @param string $message the message to be echoed.
+     * This command removes all auth assignments for a given
+     * auth id, which can be part of an account credential.
+     *
+     * @param id $id The auth item id.
      */
-    public function actionIndex($message = 'hello world')
+    public function actionRemoveAuthAssignments($id)
     {
-        echo $message . "\n";
+        PasswordController::removeAllAuthAssignments($id);
     }
 }

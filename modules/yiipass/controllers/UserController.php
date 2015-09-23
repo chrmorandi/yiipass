@@ -242,7 +242,11 @@ class UserController extends Controller
                     $permission_name) === true
         ) {
             $role_obj = \Yii::$app->authManager->getRole("$permission_name-r4uid-$user_id");
+            $permission_obj = \Yii::$app->authManager->getPermission("$permission_name-r4uid-$user_id");
+
             \Yii::$app->authManager->remove($role_obj);
+            //\Yii::$app->authManager->remove($permission_obj);
+            \Yii::$app->authManager->removeChild($role_obj, $permission_obj);
         }
     }
 
@@ -317,22 +321,4 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Gets all permissions which have been set for a given user.
-     *
-     * @param $user_id
-     * @return array
-     */
-    public function getPermissionsForUser($user_id){
-        $all_permissions = self::authManager()->getPermissions();
-        $all_permissions_for_user = array();
-
-        foreach($all_permissions as $permission){
-            if(self::authManager()->checkAccess($user_id, $permission->name) === true){
-                $all_permissions_for_user[] = $permission;
-            }
-        }
-
-        return $all_permissions_for_user;
-    }
 }

@@ -192,7 +192,7 @@ class PasswordController extends Controller
         $searchModel = new PasswordSearch();
 
         if (intval(Yii::$app->user->getIdentity()->is_admin) !== 1) {
-            $account_credential_ids = $this->getAccountCredentialIdsSetForUser(Yii::$app->user->id);
+            $account_credential_ids = $this->getAccountCredentials(Yii::$app->user->id);
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
         } else {
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -292,7 +292,7 @@ class PasswordController extends Controller
             if (Yii::$app->user->getIdentity()->is_admin == 1) {
                 // Enrich users array with account credentials info.
                 foreach ($all_users as $user) {
-                    $users_account_credential_ids[$user->id] = $this->getAccountCredentialIdsSetForUser($user->id);
+                    $users_account_credential_ids[$user->id] = $this->getAccountCredentials($user->id, $id);
                 }
                 $user_checkboxes = $this->getHtmlCheckboxesForUsers(
                     $all_users,
@@ -321,13 +321,8 @@ class PasswordController extends Controller
 
         $this->findModel($id)->delete();
 
-        $all_users = User::find()
-            ->all();
-        $this->updatePermissionsAndNotify($id, $all_users);
-        $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
-        if ($permission !== null) {
-            \Yii::$app->authManager->remove($permission);
-        }
+        // Remove roles and permissions.
+        self::removeAllAuthAssignments($id);
 
         \Yii::$app->getSession()
             ->setFlash('success', 'Account credential successfully deleted.');
@@ -359,12 +354,9 @@ class PasswordController extends Controller
      * @param $user_id
      * @return array
      */
-    public function getAccountCredentialIdsSetForUser($user_id)
+    public function getAccountCredentials($user_id, $id = false)
     {
-
-        $user_controller = new UserController('PasswordController',
-            'app\modules\yiipass');
-        $permissions = $user_controller->getPermissionsForUser($user_id);
+        $permissions = Yii::$app->getAuthManager()->getPermissionsByUser($user_id);
 
         $account_credential_ids = array();
 
@@ -415,6 +407,21 @@ class PasswordController extends Controller
         ]);
 
         return $user_checkboxes;
+    }
+
+    public static function removeAllAuthAssignments($id){
+
+        // Remove the permission itself.
+        $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
+        if ($permission !== null) {
+            $all_users = User::find()->all();
+
+            foreach($all_users as $user){
+                UserController::removePermissionFromUser($user->id, 'password-id-' . $id);
+            }
+
+            \Yii::$app->authManager->remove($permission);
+        }
     }
 
 }
