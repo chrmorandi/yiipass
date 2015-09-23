@@ -82,7 +82,7 @@ class SiteController extends Controller
         // Successful login.
         if (Yii::$app->security->validatePassword($inserted_password, $identity->password_hash)) {
             Yii::$app->user->login($identity);
-            return Yii::$app->runAction('/yiipass/password/index');
+            return $this->redirect('/');
         } else {
             // Login error.
             Yii::$app->session->setFlash('error', 'Wrong password. Please check.');
