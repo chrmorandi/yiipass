@@ -37,6 +37,13 @@ class ImportXmlController
                 $password->group = $password_from_group->group->__toString();
                 $password->lastaccess = $password_from_group->lastaccess->__toString();
                 $password->save();
+                $password->save();
+
+                UserController::addPermissionToUser(
+                    Yii::$app->user->id,
+                    'password-id-' . $password->id
+                );
+
             }
         }
     }
