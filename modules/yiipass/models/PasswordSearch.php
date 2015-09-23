@@ -49,9 +49,10 @@ class PasswordSearch extends Password
 
         $this->load($params);
 
-        if (!$this->validate()) {
+        if (!$this->validate() || (empty($account_credential_ids)
+                && intval(Yii::$app->user->getIdentity()->is_admin) !== 1)) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
 
@@ -70,7 +71,7 @@ class PasswordSearch extends Password
             ->andFilterWhere(['like', 'comment', $this->comment])
             ->andFilterWhere(['like', 'url', $this->url]);
 
-        if (isset($account_credential_ids)) {
+        if (!empty($account_credential_ids)) {
             $query->andFilterWhere(['in', 'id', $account_credential_ids]);
         }
 

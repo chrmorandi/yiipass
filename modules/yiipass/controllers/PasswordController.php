@@ -351,14 +351,18 @@ class PasswordController extends Controller
             return $this->redirect(['/site/login']);
         }
 
-        $this->findModel($id)->delete();
+        if (Yii::$app->user->getIdentity()->is_admin == 1) {
+            $this->findModel($id)->delete();
 
-        // Remove roles and permissions.
-        self::removeAllAuthAssignments($id);
+            // Remove roles and permissions.
+            self::removeAllAuthAssignments($id);
 
-        \Yii::$app->getSession()
-            ->setFlash('success', 'Account credential successfully deleted.');
+            \Yii::$app->getSession()
+                ->setFlash('success', 'Account credential successfully deleted.');
+        }
+
         return $this->redirect(['index']);
+
     }
 
     /**

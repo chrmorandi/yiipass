@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'lastaccess',
 
             ['class' => 'yii\grid\ActionColumn',
-             'template' => '{update} {open_url} {copy_username} {copy_password}',
+             'template' => '{open_url} {copy_username} {copy_password} {update}',
              'buttons' => [
                  'open_url' => function($url, $model, $key){
                      if($model->url !== ''){
