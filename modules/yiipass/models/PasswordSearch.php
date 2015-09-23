@@ -70,13 +70,7 @@ class PasswordSearch extends Password
             ->andFilterWhere(['like', 'comment', $this->comment])
             ->andFilterWhere(['like', 'url', $this->url]);
 
-        if (!empty($account_credential_ids)) {
-            /*
-            $ids = '';
-            foreach ($account_credential_ids as $key=>$value) {
-                $ids .= "$value, ";
-            }
-            */
+        if (isset($account_credential_ids)) {
             $query->andFilterWhere(['in', 'id', $account_credential_ids]);
         }
 

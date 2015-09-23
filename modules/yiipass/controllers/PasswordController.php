@@ -386,7 +386,7 @@ class PasswordController extends Controller
      * @param $user_id
      * @return array
      */
-    public function getAccountCredentials($user_id, $id = false)
+    public function getAccountCredentials($user_id)
     {
         $permissions = Yii::$app->getAuthManager()->getPermissionsByUser($user_id);
 
