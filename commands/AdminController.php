@@ -16,12 +16,23 @@ use yii\console\Controller;
 class AdminController extends Controller
 {
     /**
+     * Removes all auth assignments.
+     *
+     * @return null
+     */
+    public function actionRemoveAllAuthData()
+    {
+        \Yii::$app->getAuthManager()->removeAll();
+    }
+
+    /**
      * This command removes all auth assignments for a given
      * auth id, which can be part of an account credential.
      *
      * @param id $id The auth item id.
+     * @return null
      */
-    public function actionRemoveAuthAssignments($id)
+    public function actionRemoveAuthAssignmentsForId($id)
     {
         PasswordController::removeAllAuthAssignments($id);
     }

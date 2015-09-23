@@ -58,6 +58,32 @@ class PasswordController extends Controller
     }
 
     /**
+     * Sets the permissions for users, after password update form was
+     * submitted. This method also notifies users.
+     *
+     * @param $permission_id int
+     * @param $all_users array
+     * @param $allowed_users array|false
+     *
+     * @return null
+     */
+    private function setNewPermissionsAndNotify($permission_id)
+    {
+        $all_users = User::find()
+            ->all();
+
+        foreach ($all_users as $user) {
+            if (isset(Yii::$app->request->post()['allowed_users'])
+                && in_array($user->id, Yii::$app->request->post()['allowed_users'])) {
+                UserController::addPermissionToUser(
+                    $user->id,
+                    'password-id-' . $permission_id
+                );
+            }
+        }
+    }
+
+    /**
      * Notify user via email about password assignment or removal.
      *
      * @param $user_id
@@ -240,9 +266,13 @@ class PasswordController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             // The user which has created the password can access it.
             UserController::addPermissionToUser(
-                $model->id,
-                'password-id-' . Yii::$app->user->id
+                Yii::$app->user->id,
+                'password-id-' . $model->id
             );
+
+            // Update permissions if they have been set for any user.
+            $this->setNewPermissionsAndNotify($model->id);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             $elements_to_render = array('model' => $model);
@@ -291,9 +321,11 @@ class PasswordController extends Controller
 
             if (Yii::$app->user->getIdentity()->is_admin == 1) {
                 // Enrich users array with account credentials info.
-                foreach ($all_users as $user) {
-                    $users_account_credential_ids[$user->id] = $this->getAccountCredentials($user->id, $id);
+                $all_users = User::find()->all();
+                foreach($all_users as $user){
+                    $users_account_credential_ids[$user->id] = Yii::$app->getAuthManager()->getPermissionsByUser($user->id);
                 }
+
                 $user_checkboxes = $this->getHtmlCheckboxesForUsers(
                     $all_users,
                     $users_account_credential_ids,
@@ -380,12 +412,22 @@ class PasswordController extends Controller
      */
     private function getHtmlCheckboxesForUsers($all_users, $users_account_credential_ids, $model)
     {
+        // Get data from existing acc permissions.
+        if ($users_account_credential_ids !== false){
+            foreach ($users_account_credential_ids as $user_id=>$all_permissions_data){
+                foreach ($all_permissions_data
+                         as $one_permission_data){
+                    $users_acc_ids[$user_id][] = str_replace('password-id-', '', $one_permission_data->name);
+                }
+            }
+        }
+
         $user_checkboxes = '';
 
         foreach ($all_users as $user) {
             $checkbox_status = null;
-            if (is_array($users_account_credential_ids) &&
-                in_array($model->id, $users_account_credential_ids[$user->id])
+            if (isset($users_acc_ids[$user->id]) &&
+                in_array($model->id, $users_acc_ids[$user->id])
             ) {
                 $checked = true;
             } else {

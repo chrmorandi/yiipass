@@ -242,11 +242,7 @@ class UserController extends Controller
                     $permission_name) === true
         ) {
             $role_obj = \Yii::$app->authManager->getRole("$permission_name-r4uid-$user_id");
-            $permission_obj = \Yii::$app->authManager->getPermission("$permission_name-r4uid-$user_id");
-
             \Yii::$app->authManager->remove($role_obj);
-            //\Yii::$app->authManager->remove($permission_obj);
-            \Yii::$app->authManager->removeChild($role_obj, $permission_obj);
         }
     }
 
