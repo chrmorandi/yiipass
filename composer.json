@@ -1,7 +1,7 @@
 {
     "name": "jepster/yiipass",
     "description": "Collaborative passwords manager in webbrowser. Based on Yii2 framework.",
-    "keywords": ["yii2", "framework", "basic", "project template"],
+    "keywords": ["account credential management", "password manager"],
     "homepage": "https://github.com/jepster/yiipass",
     "type": "project",
     "license": "MIT",
@@ -47,8 +47,5 @@
             "npm-asset-library": "vendor/npm",
             "bower-asset-library": "vendor/bower"
         }
-    },
-    "autoload": {
-      "classmap": ["components/"]
     }
 }
