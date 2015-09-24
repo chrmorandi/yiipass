@@ -25,3 +25,13 @@ composer.phar
 phpunit.phar
 # local phpunit config
 /phpunit.xml
+
+# assets cache
+/web/assets
+
+# uploads
+/web/uploads
+
+# config-files with account data.
+/config/db.php
+/config/params.php
