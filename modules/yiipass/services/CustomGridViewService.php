@@ -2,6 +2,8 @@
 
 namespace app\modules\yiipass\services;
 
+use app\modules\yiipass\controllers\PasswordController;
+use app\modules\yiipass\controllers\UserController;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use app\modules\yiipass\models\Password;
@@ -58,11 +60,30 @@ class CustomGridViewService extends GridView {
         foreach($cells as $cell){
             if(is_numeric(strpos($cell, '[group]'))){
                 $searchModel = new PasswordSearch();
-                $password_groups = Password::find()
-                                                ->select('group')
+                $acc_groups = Password::find()
+                                                ->select(['id', 'group'])
                                                 ->where(['is not', 'group', null])
                                                 ->asArray()->all();
-                $arr_dropdown = ArrayHelper::map($password_groups, 'group', 'group');
+
+                // Filter unique group items from all account credentials.
+                $acc_groups = self::getUniqueArrItems($acc_groups, 'group');
+
+                // Groups for which the user has access.
+                $allowed_acc_groups = array();
+
+                if (intval(\Yii::$app->user->identity->is_admin) !== 1){
+                    foreach ($acc_groups as $a_group) {
+                        // Iterate all groups and check if user is allowed.
+                        if (PasswordController::checkAccessByAccId($a_group['id'])){
+                            $allowed_acc_groups[] = $a_group;
+                        }
+                    }
+                } else {
+                    // Admin can access everything.
+                    $allowed_acc_groups = $acc_groups;
+                }
+
+                $arr_dropdown = ArrayHelper::map($allowed_acc_groups, 'group', 'group');
                 $cell = Html::activeDropDownList($searchModel, 'group', $arr_dropdown,
                                                 ['class'=>'form-control','prompt' => 'Select Group']);
                 $cell = $this->render('@app/modules/yiipass/views/elements/dropdown', array('group_input' => $cell));
@@ -78,8 +99,14 @@ class CustomGridViewService extends GridView {
         return $new_cells;
     }
 
-    // checkbox column
-    protected function renderDataCellContent($model, $key, $index)
+    /**
+     * Displays the index for the pagination.
+     *
+     * @param int $index The index id.
+     *
+     * @return mixed
+     */
+    protected function renderDataCellContent($index)
     {
         $pagination = $this->grid->dataProvider->getPagination();
         if ($pagination !== false) {
@@ -87,6 +114,31 @@ class CustomGridViewService extends GridView {
         } else {
             return $index + 1;
         }
+    }
+
+    /**
+     * Filters duplicate items in multi-dimensional array.
+     *
+     * @param array $array The array with duplicated items.
+     * @param string $key The key on which should be filtered.
+     *
+     * @return array
+     */
+    protected static function getUniqueArrItems($array, $key)
+    {
+        $temp_array = array();
+
+        foreach ($array as &$v) {
+
+            if (!isset($temp_array[$v[$key]]))
+
+                $temp_array[$v[$key]] =& $v;
+
+        }
+
+        $array = array_values($temp_array);
+
+        return $array;
     }
 
 }

@@ -470,4 +470,25 @@ class PasswordController extends Controller
         }
     }
 
+    /**
+     * Returns bool for current users account credential permissions state
+     * via user id.
+     *
+     * @param int $acc_id The account credential id.
+     *
+     * @return bool
+     */
+    public static function checkAccessByAccId($acc_id){
+
+        $user_id = Yii::$app->user->id;
+
+        if (Yii::$app->authManager
+            ->checkAccess($user_id,
+                'password-id-' . $acc_id) === true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
