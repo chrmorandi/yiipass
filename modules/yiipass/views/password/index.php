@@ -1,9 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use app\modules\yiipass\services\CustomGridViewService;
-use yii\helpers\ArrayHelper;
 use app\models\Password;
 
 use app\modules\yiipass\assets\YiiPassAsset;
