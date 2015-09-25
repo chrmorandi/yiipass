@@ -5,7 +5,7 @@ Collaborative passwords manager in web browser. Based on the [Yii2 PHP framework
 Ideal for intranet usage for teams. Fast and handy access from the internet. It provides the following features:
 
 * Account credential management via web browser.
-* Assign account credentials to various users by Yii2 auth manager component.
+* Assign account credentials to various users.
 * Copy username or password fast into clipboard.
 * Responsive user interface by bootstrap frontend framework.
 * Import and export functionality via open KeePass XML format. Many apps and desktop programs for all operating
