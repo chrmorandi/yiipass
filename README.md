@@ -8,8 +8,8 @@ Ideal for intranet usage for teams. Fast and handy access from the internet. It 
 * Assign account credentials to various users by Yii2 auth manager component.
 * Copy username or password fast into clipboard.
 * Responsive user interface by bootstrap frontend framework.
-* Import and export functionality via open KeePass XML format. 
-* Many apps and desktop programs for all operating systems are using it:
+* Import and export functionality via open KeePass XML format. Many apps and desktop programs for all operating
+systems are using the KeePass XML format.
     * [KeePassX (desktop)](https://www.keepassx.org/)
     * [KeePass (desktop)](http://keepass.info/)
     * [KeePassDroid (app - Android)](https://play.google.com/store/apps/details?id=com.android.keepass&hl=en)
@@ -32,6 +32,10 @@ composer --stability=dev --keep-vcs create-project jepster/yiipass yiipass-dev
 Please let your webserver point to the "web"-directory which will be created afterwards. Like it's default in Yii2
 framework. 
 
+The user for start is:
+* username: admin
+* password: admin
+
 All set!
 -----------------------
 
@@ -51,7 +55,21 @@ will show you how to use YiiPass.
 ![Permissions](http://preview.intellipass.it/github-images/permissions.png)
 
 ###Source code project structure
+[More about the application structure](http://www.yiiframework.com/doc-2.0/guide-start-workflow.html#application-structure)
 ![Folder structure](http://preview.intellipass.it/github-images/folder-structure.png)
+
+Use MySQL, MariaDB, PostgreSQL, CUBRID, Oracle or MSSQL instead of SQlite
+-----------------------
+
+Change the configuration to the desired DBMS in the config file (config/db.php). An instruction can be found at 
+[bsourcecode.com](http://www.bsourcecode.com/yiiframework2/yii2-0-database-connection/). After the database config is
+set, you need to apply the database migrations via the command line program from Yii2 ([more about the command line
+program in Yii2](http://www.yiiframework.com/doc-2.0/guide-tutorial-console.html)).
+```
+yii migrate --migrationPath=@yii/rbac/migrations
+yii migrate --migrationPath=modules/yiipass/migrations
+```
+Now your database is feed with the schema.
 
 Known issues
 -----------------------
