@@ -71,6 +71,8 @@ yii migrate --migrationPath=modules/yiipass/migrations
 ```
 Now your database is feed with the schema.
 
+The SQlite database, which is used per default, is located in the application root folder. The filename is yiipass.sqlite.
+
 Known issues
 -----------------------
 
