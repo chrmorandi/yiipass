@@ -9,7 +9,7 @@ Ideal for intranet usage for teams. Fast and handy access from the internet. It 
 * Copy username or password fast into clipboard.
 * Responsive user interface by bootstrap frontend framework.
 * Import and export functionality via open KeePass XML format. Many apps and desktop programs for all operating
-systems are using the KeePass XML format.
+systems are using the KeePass XML format. For example:
     * [KeePassX (desktop)](https://www.keepassx.org/)
     * [KeePass (desktop)](http://keepass.info/)
     * [KeePassDroid (app - Android)](https://play.google.com/store/apps/details?id=com.android.keepass&hl=en)
