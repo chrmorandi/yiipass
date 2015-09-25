@@ -1,21 +1,18 @@
 YiiPass
 ===============
 
-Collaborative passwords manager in web browser. Based on Yii2 framework. It provides the following features:
+Collaborative passwords manager in web browser. Based on the [Yii2 framework](http://www.yiiframework.com/). It provides the following features:
 
 * Account credential management via web browser.
 * Assign account credentials to various users by Yii2 auth manager component.
 * Copy username or password fast into clipboard.
 * Responsive user interface by bootstrap frontend framework.
 
-
-[![Build Status](https://secure.travis-ci.org/jdorn/FileSystemCache.png?branch=master)](http://travis-ci.org/jdorn/FileSystemCache)
-
 Getting Started
 ------------------
 
 YiiPass uses SQlite database by default. That allows you to quickly check the YiiPass application without configuration
-hassle. The installation work by composer, so you can test YiiPass very quick.
+hassle. The installation works via the [Composer php package manager](https://getcomposer.org/), so you can test YiiPass very quick.
 
 If you're already using Composer, you need only 1 command to install YiiPass:
 
@@ -36,6 +33,8 @@ will show you how to use YiiPass.
 
 ![Copy fast](http://preview.intellipass.it/github-images/copy-fast.png)
 
-![Copy fast](http://preview.intellipass.it/github-images/keepass.png)
+![KeePass](http://preview.intellipass.it/github-images/keepass.png)
 
-![Copy fast](http://preview.intellipass.it/github-images/permissions.png)
+![Permissions](http://preview.intellipass.it/github-images/permissions.png)
+
+![Folder structure](http://preview.intellipass.it/github-images/folder-structure.png)
