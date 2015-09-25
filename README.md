@@ -55,7 +55,7 @@ will show you how to use YiiPass.
 ![Permissions](http://preview.intellipass.it/github-images/permissions.png)
 
 ###Source code project structure
-[More about the application structure](http://www.yiiframework.com/doc-2.0/guide-start-workflow.html#application-structure)
+Read more about the application structure in the [Yii2 PHP framework guide].(http://www.yiiframework.com/doc-2.0/guide-start-workflow.html#application-structure)
 ![Folder structure](http://preview.intellipass.it/github-images/folder-structure.png)
 
 Use MySQL, MariaDB, PostgreSQL, CUBRID, Oracle or MSSQL instead of SQlite
