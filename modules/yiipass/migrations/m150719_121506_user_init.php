@@ -3,7 +3,7 @@
 use yii\db\Schema;
 use yii\db\Migration;
 
-class m150719_121506_user extends Migration
+class m150719_121506_user_init extends Migration
 {
 
     // Use safeUp/safeDown to run migration code within a transaction
@@ -19,6 +19,7 @@ class m150719_121506_user extends Migration
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT \'10\'',
             'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
             'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'is_admin',Schema::TYPE_INTEGER
         ]);
     }
 
