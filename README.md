@@ -2,7 +2,7 @@ YiiPass
 ===============
 
 Collaborative passwords manager in web browser. Based on the [Yii2 PHP framework](http://www.yiiframework.com/).
-Ideal for intranet usage for teams and fast and handy access from the internet. It provides the following features:
+Ideal for intranet usage for teams. Fast and handy access from the internet. It provides the following features:
 
 * Account credential management via web browser.
 * Assign account credentials to various users by Yii2 auth manager component.
@@ -67,3 +67,11 @@ handy copy-function in web browsers without flash.
 * If you edit an user account, the user password needs to be inserted.
 * There should be a second password form field on the account credentials edit page. That way there would be more
 control about the password validity.
+
+Bugs, questions, suggestions?
+-----------------------
+
+Please feel free to contact me via GitHub. Don't forget the issues management functionality here on GitHub.
+
+![Problem](http://preview.intellipass.it/github-images/problem.jpg)
+
