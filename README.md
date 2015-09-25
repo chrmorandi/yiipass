@@ -23,7 +23,7 @@ Getting Started
 YiiPass uses SQlite database by default. That allows you to quickly check the YiiPass application without configuration
 hassle. The installation works via the [Composer php package manager](https://getcomposer.org/), so you can test YiiPass very quick.
 
-If you're already using Composer, you need only 1 command to install YiiPass:
+If you're already using Composer, you need only _1 command to install_ YiiPass:
 
 ```
 composer --stability=dev --keep-vcs create-project jepster/yiipass yiipass-dev
