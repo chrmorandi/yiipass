@@ -4,7 +4,7 @@ YiiPass
 Collaborative passwords manager in web browser. Based on the [Yii2 PHP framework](http://www.yiiframework.com/).
 Ideal for intranet usage for teams. Fast and handy access from the internet. It provides the following features:
 
-* Account credential management via web browser.
+* Account credential and user management via web browser.
 * Assign account credentials to various users.
 * Copy username or password fast into clipboard.
 * Responsive user interface by bootstrap frontend framework.
