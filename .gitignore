@@ -5,6 +5,7 @@
 nbproject
 
 # zend studio for eclipse project files
+/modules/inpa_secure
 .buildpath
 .project
 .settings
