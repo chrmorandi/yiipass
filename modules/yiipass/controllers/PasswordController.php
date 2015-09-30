@@ -211,6 +211,16 @@ class PasswordController extends Controller
      */
     public function actionIndex()
     {
+        $encrypted_text = self::encrypt('Peter ist das. Muh. blar.');
+
+        $decrypted_text = self::decrypt($encrypted_text);
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<meta http-equiv="Content-type" content="text/html; charset=utf-8" />';
+        var_dump($encrypted_text);
+        var_dump(htmlspecialchars($decrypted_text, ENT_QUOTES, 'UTF-8'));
+        var_dump(mb_substr($decrypted_text, 0, 490, "UTF-8"));
+        die();
+
         if (Yii::$app->user->isGuest === true) {
             return $this->redirect(['/site/login']);
         }
@@ -263,7 +273,13 @@ class PasswordController extends Controller
 
         $model = new Password();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+            /* @var $model \app\modules\yiipass\models\Password */
+            //$model->password =
+
+            $model->save();
+
             // The user which has created the password can access it.
             UserController::addPermissionToUser(
                 Yii::$app->user->id,
@@ -491,4 +507,52 @@ class PasswordController extends Controller
         }
     }
 
+    public static function encrypt($plaintext){
+        # the key should be random binary, use scrypt, bcrypt or PBKDF2 to
+        # convert a string into a key
+        # key is specified using hexadecimal
+        //$key = pack('H*', Yii::$app->params['secret']);
+
+        # create a random IV to use with CBC encoding
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+
+        # creates a cipher text compatible with AES (Rijndael block size = 128)
+        # to keep the text confidential
+        # only suitable for encoded input that never ends with value 00h
+        # (because of default zero padding)
+        $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, Yii::$app->params['secret'],
+            $plaintext, MCRYPT_MODE_CBC, $iv);
+
+        # prepend the IV for it to be available for decryption
+        $ciphertext = $iv . $ciphertext;
+
+        # encode the resulting cipher text so it can be represented by a string
+        return base64_encode($ciphertext);
+    }
+
+    public static function decrypt($ciphertext_base64){
+        # the key should be random binary, use scrypt, bcrypt or PBKDF2 to
+        # convert a string into a key
+        # key is specified using hexadecimal
+        //$key = pack('H*', Yii::$app->params['secret']);
+
+        $ciphertext_dec = base64_decode($ciphertext_base64);
+
+        # create a random IV to use with CBC encoding
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+
+        # retrieves the IV, iv_size should be created using mcrypt_get_iv_size()
+        $iv_dec = substr($ciphertext_dec, 0, $iv_size);
+
+        # retrieves the cipher text (everything except the $iv_size in the front)
+        $ciphertext_dec = substr($ciphertext_dec, $iv_size);
+
+        # may remove 00h valued characters from end of plain text
+        $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, Yii::$app->params['secret'],
+            $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
+
+        // to remove NULL padding
+        return rtrim($plaintext_dec, "\0");
+    }
 }
