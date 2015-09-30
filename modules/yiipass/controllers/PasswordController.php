@@ -507,6 +507,13 @@ class PasswordController extends Controller
         }
     }
 
+    /**
+     * Encrypts plaintext using an algorithm.
+     *
+     * @param $plaintext
+     *
+     * @return string
+     */
     public static function encrypt($plaintext){
         # the key should be random binary, use scrypt, bcrypt or PBKDF2 to
         # convert a string into a key
@@ -531,6 +538,13 @@ class PasswordController extends Controller
         return base64_encode($ciphertext);
     }
 
+    /**
+     * Decrypts plaintext using an algorithm.
+     *
+     * @param $ciphertext_base64
+     *
+     * @return string
+     */
     public static function decrypt($ciphertext_base64){
         # the key should be random binary, use scrypt, bcrypt or PBKDF2 to
         # convert a string into a key
