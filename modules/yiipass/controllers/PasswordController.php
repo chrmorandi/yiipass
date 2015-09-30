@@ -508,18 +508,14 @@ class PasswordController extends Controller
     }
 
     /**
-     * Encrypts plaintext using an algorithm.
+     * Encrypts plaintext using an algorithm. Secret from params config-file
+     * is used for encryption.
      *
      * @param $plaintext
      *
      * @return string
      */
     public static function encrypt($plaintext){
-        # the key should be random binary, use scrypt, bcrypt or PBKDF2 to
-        # convert a string into a key
-        # key is specified using hexadecimal
-        //$key = pack('H*', Yii::$app->params['secret']);
-
         # create a random IV to use with CBC encoding
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
@@ -539,18 +535,14 @@ class PasswordController extends Controller
     }
 
     /**
-     * Decrypts plaintext using an algorithm.
+     * Decrypts plaintext using an algorithm. Secret from params config-file
+     * is used for decryption.
      *
      * @param $ciphertext_base64
      *
      * @return string
      */
     public static function decrypt($ciphertext_base64){
-        # the key should be random binary, use scrypt, bcrypt or PBKDF2 to
-        # convert a string into a key
-        # key is specified using hexadecimal
-        //$key = pack('H*', Yii::$app->params['secret']);
-
         $ciphertext_dec = base64_decode($ciphertext_base64);
 
         # create a random IV to use with CBC encoding
@@ -566,7 +558,7 @@ class PasswordController extends Controller
         $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, Yii::$app->params['secret'],
             $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
 
-        // to remove NULL padding
+        // To remove NULL padding. The question marks at the end of the string.
         return rtrim($plaintext_dec, "\0");
     }
 }
