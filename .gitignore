@@ -31,7 +31,7 @@ phpunit.phar
 /web/assets
 
 # uploads
-/web/uploads
+/web/uploads/*
 
 # config-files with account data.
 /config/db.php

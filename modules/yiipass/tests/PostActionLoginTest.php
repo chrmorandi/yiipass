@@ -14,8 +14,6 @@ class PostActionLoginTest extends \PHPUnit_Framework_TestCase {
         $post_action_login = new PostActionLoginController();
 
         $post_action_login->actionGrabLogin();
-
-        $debug = true;
     }
 
 }

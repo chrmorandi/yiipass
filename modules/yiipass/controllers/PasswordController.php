@@ -37,16 +37,18 @@ class PasswordController extends Controller
 
         foreach ($all_users as $user) {
             if (isset(Yii::$app->request->post()['allowed_users'])
-                && in_array($user->id, Yii::$app->request->post()['allowed_users'])) {
-               UserController::addPermissionToUser(
-                   $user->id,
-                   'password-id-' . $permission_id
-               );
+                && in_array($user->id, Yii::$app->request->post()['allowed_users'])
+            ) {
+                UserController::addPermissionToUser(
+                    $user->id,
+                    'password-id-' . $permission_id
+                );
             }
 
             // Remove permission from user.
             if (!isset(Yii::$app->request->post()['allowed_users'])
-                || !in_array($user->id, Yii::$app->request->post()['allowed_users'])) {
+                || !in_array($user->id, Yii::$app->request->post()['allowed_users'])
+            ) {
                 UserController::removePermissionFromUser(
                     $user->id,
                     'password-id-' . $permission_id
@@ -74,7 +76,8 @@ class PasswordController extends Controller
 
         foreach ($all_users as $user) {
             if (isset(Yii::$app->request->post()['allowed_users'])
-                && in_array($user->id, Yii::$app->request->post()['allowed_users'])) {
+                && in_array($user->id, Yii::$app->request->post()['allowed_users'])
+            ) {
                 UserController::addPermissionToUser(
                     $user->id,
                     'password-id-' . $permission_id
@@ -123,7 +126,7 @@ class PasswordController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -158,7 +161,9 @@ class PasswordController extends Controller
 
             if (Yii::$app->authManager
                     ->checkAccess($user_id,
-                        'password-id-' . $password['id']) === true || $is_admin == 1) {
+                        'password-id-' . $password['id']) === true || $is_admin == 1
+            ) {
+                $password['password'] = $this->decrypt($password['password']);
                 $allowed_passwords[] = $password;
             }
 
@@ -187,7 +192,6 @@ class PasswordController extends Controller
             return $this->redirect(['/site/login']);
         }
 
-
         $model = new XmlUploadForm();
 
         if (Yii::$app->request->isPost) {
@@ -211,16 +215,6 @@ class PasswordController extends Controller
      */
     public function actionIndex()
     {
-        $encrypted_text = self::encrypt('Peter ist das. Muh. blar.');
-
-        $decrypted_text = self::decrypt($encrypted_text);
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<meta http-equiv="Content-type" content="text/html; charset=utf-8" />';
-        var_dump($encrypted_text);
-        var_dump(htmlspecialchars($decrypted_text, ENT_QUOTES, 'UTF-8'));
-        var_dump(mb_substr($decrypted_text, 0, 490, "UTF-8"));
-        die();
-
         if (Yii::$app->user->isGuest === true) {
             return $this->redirect(['/site/login']);
         }
@@ -229,13 +223,13 @@ class PasswordController extends Controller
 
         if (intval(Yii::$app->user->getIdentity()->is_admin) !== 1) {
             $account_credential_ids = $this->getAccountCredentials(Yii::$app->user->id);
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
+            $dataProvider           = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
         } else {
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         }
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
 
@@ -275,8 +269,10 @@ class PasswordController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
 
+            $sPassword = Yii::$app->request->post()['Password']['password'];
+
             /* @var $model \app\modules\yiipass\models\Password */
-            //$model->password =
+            $model->password = $this->encrypt($sPassword);
 
             $model->save();
 
@@ -294,9 +290,9 @@ class PasswordController extends Controller
             $elements_to_render = array('model' => $model);
 
             if (Yii::$app->user->getIdentity()->is_admin == 1) {
-                $all_users = User::find()
+                $all_users                             = User::find()
                     ->all();
-                $user_checkboxes = $this->getHtmlCheckboxesForUsers($all_users, false, $model);
+                $user_checkboxes                       = $this->getHtmlCheckboxesForUsers($all_users, false, $model);
                 $elements_to_render['user_checkboxes'] = $user_checkboxes;
             }
 
@@ -322,7 +318,14 @@ class PasswordController extends Controller
         $all_users = User::find()
             ->all();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+            $sPassword = Yii::$app->request->post()['Password']['password'];
+
+            /* @var $model \app\modules\yiipass\models\Password */
+            $model->password = $this->encrypt($sPassword);
+
+            $model->save();
 
             $this->updatePermissionsAndNotify($id);
 
@@ -338,11 +341,11 @@ class PasswordController extends Controller
             if (Yii::$app->user->getIdentity()->is_admin == 1) {
                 // Enrich users array with account credentials info.
                 $all_users = User::find()->all();
-                foreach($all_users as $user){
+                foreach ($all_users as $user) {
                     $users_account_credential_ids[$user->id] = Yii::$app->getAuthManager()->getPermissionsByUser($user->id);
                 }
 
-                $user_checkboxes = $this->getHtmlCheckboxesForUsers(
+                $user_checkboxes                       = $this->getHtmlCheckboxesForUsers(
                     $all_users,
                     $users_account_credential_ids,
                     $model
@@ -433,10 +436,10 @@ class PasswordController extends Controller
     private function getHtmlCheckboxesForUsers($all_users, $users_account_credential_ids, $model)
     {
         // Get data from existing acc permissions.
-        if ($users_account_credential_ids !== false){
-            foreach ($users_account_credential_ids as $user_id=>$all_permissions_data){
+        if ($users_account_credential_ids !== false) {
+            foreach ($users_account_credential_ids as $user_id => $all_permissions_data) {
                 foreach ($all_permissions_data
-                         as $one_permission_data){
+                         as $one_permission_data) {
                     $users_acc_ids[$user_id][] = str_replace('password-id-', '', $one_permission_data->name);
                 }
             }
@@ -457,8 +460,8 @@ class PasswordController extends Controller
             $username = ($user->is_admin == 1) ? $user->username . ' (admin)' : $user->username;
 
             $user_checkboxes .= $this->renderPartial('_user_checkboxes', [
-                'checked' => $checked,
-                'user_id' => $user->id,
+                'checked'  => $checked,
+                'user_id'  => $user->id,
                 'username' => $username
             ]);
         }
@@ -471,14 +474,15 @@ class PasswordController extends Controller
         return $user_checkboxes;
     }
 
-    public static function removeAllAuthAssignments($id){
+    public static function removeAllAuthAssignments($id)
+    {
 
         // Remove the permission itself.
         $permission = \Yii::$app->authManager->getPermission('password-id-' . $id);
         if ($permission !== null) {
             $all_users = User::find()->all();
 
-            foreach($all_users as $user){
+            foreach ($all_users as $user) {
                 UserController::removePermissionFromUser($user->id, 'password-id-' . $id);
             }
 
@@ -494,13 +498,15 @@ class PasswordController extends Controller
      *
      * @return bool
      */
-    public static function checkAccessByAccId($acc_id){
+    public static function checkAccessByAccId($acc_id)
+    {
 
         $user_id = Yii::$app->user->id;
 
         if (Yii::$app->authManager
-            ->checkAccess($user_id,
-                'password-id-' . $acc_id) === true) {
+                ->checkAccess($user_id,
+                    'password-id-' . $acc_id) === true
+        ) {
             return true;
         } else {
             return false;
@@ -511,14 +517,15 @@ class PasswordController extends Controller
      * Encrypts plaintext using an algorithm. Secret from params config-file
      * is used for encryption.
      *
-     * @param $plaintext
+     * @param string $plaintext
      *
      * @return string
      */
-    public static function encrypt($plaintext){
+    public static function encrypt($plaintext)
+    {
         # create a random IV to use with CBC encoding
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
         # creates a cipher text compatible with AES (Rijndael block size = 128)
         # to keep the text confidential
@@ -538,11 +545,12 @@ class PasswordController extends Controller
      * Decrypts plaintext using an algorithm. Secret from params config-file
      * is used for decryption.
      *
-     * @param $ciphertext_base64
+     * @param string $ciphertext_base64
      *
      * @return string
      */
-    public static function decrypt($ciphertext_base64){
+    public static function decrypt($ciphertext_base64)
+    {
         $ciphertext_dec = base64_decode($ciphertext_base64);
 
         # create a random IV to use with CBC encoding

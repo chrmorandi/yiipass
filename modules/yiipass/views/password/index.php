@@ -3,22 +3,24 @@
 use yii\helpers\Html;
 use app\modules\yiipass\services\CustomGridViewService;
 use app\models\Password;
+use \app\modules\yiipass\controllers\PasswordController;
 
 use app\modules\yiipass\assets\YiiPassAsset;
+
 YiiPassAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\PasswordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Account Credentials Overview';
+$this->title                   = 'Account Credentials Overview';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="password-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php if(Yii::$app->session->hasFlash('success')){ ?>
+    <?php if (Yii::$app->session->hasFlash('success')) { ?>
         <div class="alert alert-success" role="alert">
             <?= Yii::$app->session->getFlash('success'); ?>
         </div>
@@ -28,7 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-xs-12">
             <nav class="navbar">
                 <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         Actions
                         <span class="caret"></span>
                     </button>
@@ -45,37 +48,42 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $arr_widget = [
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            'title',
+        'filterModel'  => $searchModel,
+        'columns'      => [
+            ['class'  => 'yii\grid\DataColumn',
+             'format' => 'html',
+             'value'  => function (\app\modules\yiipass\models\Password $password) {
+                            return Html::a($password->title, ['view?id=' . $password->id]);
+                        }
+            ],
             'group',
             'lastaccess',
 
-            ['class' => 'yii\grid\ActionColumn',
+            ['class'    => 'yii\grid\ActionColumn',
              'template' => '{open_url} {copy_username} {copy_password} {update}',
-             'buttons' => [
-                 'open_url' => function($url, $model, $key){
-                     if($model->url !== ''){
-                         return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
-                     }
-                 },
-                 'copy_username' => function($url, $model, $key){
-                     if($model->username !== ''){
-                         return '<button type="button" class="copy_username copy_button" data-clipboard-text="' . $model->username . '" title="Click to copy me.">Copy Username</button>';
-                     }
-                 },
-                 'copy_password' => function($url, $model, $key){
-                     if($model->password !== ''){
-                         return '<button type="button" class="copy_password copy_button" data-clipboard-text="' . $model->password . '" title="Click to copy me.">Copy Password</button>';
-                     }
-                 }
+             'buttons'  => [
+                 'open_url'      => function ($url, $model, $key) {
+                                         if ($model->url !== '') {
+                                             return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
+                                         }
+                                     },
+                 'copy_username' => function ($url, $model, $key) {
+                                         if ($model->username !== '') {
+                                             return '<button type="button" class="copy_username copy_button" data-clipboard-text="' . $model->username . '" title="Click to copy me.">Copy Username</button>';
+                                         }
+                                     },
+                 'copy_password' => function ($url, $model, $key) {
+                                         if ($model->password !== '') {
+                                             return '<button type="button" class="copy_password copy_button" data-clipboard-text="' . PasswordController::decrypt($model->password) . '" title="Click to copy me.">Copy Password</button>';
+                                         }
+                                     }
              ]
             ],
         ],
     ];
 
     // If user is admin, set checkbox column at the beginning of the columns.
-    if (Yii::$app->user->identity->is_admin){
+    if (Yii::$app->user->identity->is_admin) {
         /**
          * If checkboxes will be needed, comment the following line in.
          * Increase then the array key of columns.

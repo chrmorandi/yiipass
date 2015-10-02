@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\modules\yiipass\controllers\PasswordController;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Password */
@@ -9,6 +10,9 @@ use yii\widgets\DetailView;
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Passwords', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+// Make password visible.
+$model->password = PasswordController::decrypt($model->password);
 ?>
 <div class="password-view">
 
