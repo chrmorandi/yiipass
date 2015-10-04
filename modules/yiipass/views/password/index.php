@@ -59,8 +59,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
             ],
             'group',
-            'lastaccess',
-
             ['class'    => 'yii\grid\ActionColumn',
              'template' => '{open_url} {copy_username} {copy_password} {update}',
              'buttons'  => [
