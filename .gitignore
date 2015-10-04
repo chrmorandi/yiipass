@@ -20,6 +20,7 @@ Thumbs.db
 composer.phar
 
 # Mac DS_Store Files
+/yiipass.sqlite
 .DS_Store
 
 # phpunit itself is not needed
