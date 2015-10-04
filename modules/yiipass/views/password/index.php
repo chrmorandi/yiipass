@@ -51,6 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel'  => $searchModel,
         'columns'      => [
             ['class'  => 'yii\grid\DataColumn',
+             'attribute' => 'title',
              'format' => 'html',
              'value'  => function (\app\modules\yiipass\models\Password $password) {
                             return Html::a($password->title, ['view?id=' . $password->id]);
