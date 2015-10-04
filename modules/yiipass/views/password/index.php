@@ -51,9 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel'  => $searchModel,
         'columns'      => [
             ['class'  => 'yii\grid\DataColumn',
-             'attribute' => 'title',
              'format' => 'html',
-             'filter' => true,
              'value'  => function (\app\modules\yiipass\models\Password $password) {
                             return Html::a($password->title, ['view?id=' . $password->id]);
                         }
@@ -89,7 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
          * Increase then the array key of columns.
          */
         // array_unshift($arr_widget['columns'], ['class' => 'yii\grid\CheckboxColumn']);
-        $arr_widget['columns']['3']['template'] .= '{delete} ';
+        $arr_widget['columns']['2']['template'] .= '{delete} ';
     }
 
     ?>
