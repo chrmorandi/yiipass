@@ -48,8 +48,8 @@ will show you how to use YiiPass.
 ###Search fast
 ![Search fast](http://preview.intellipass.it/github-images/search.png)
 
-###Copy fast
-![Copy fast](http://preview.intellipass.it/github-images/copy-fast.png)
+###Copy, edit, delete and view fast
+![Copy fast](http://preview.intellipass.it/github-images/copy-fast2.png)
 
 ###Integrate with open KeePass format
 ![KeePass](http://preview.intellipass.it/github-images/keepass.png)
