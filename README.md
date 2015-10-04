@@ -6,8 +6,8 @@ Ideal for intranet usage for teams. Fast and handy access from the internet. It 
 
 * Account credential and user management via web browser.
 * Assign account credentials to various users.
-* Passwords are saved as encrypted hash in database. You can specify an unique key in your configuration for saving
-the passwords to your database.
+* Passwords are saved as encrypted hash in the database. You can specify an unique key for password encryption in
+your configuration (config/params.php).
 * Copy username or password fast into clipboard.
 * Responsive user interface by bootstrap frontend framework.
 * Import and export functionality via open KeePass XML format. Many apps and desktop programs for all operating
