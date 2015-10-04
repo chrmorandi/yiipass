@@ -6,6 +6,8 @@ Ideal for intranet usage for teams. Fast and handy access from the internet. It 
 
 * Account credential and user management via web browser.
 * Assign account credentials to various users.
+* Passwords are saved as encrypted hash in database. You can specify an unique key in your configuration for saving
+the passwords to your database.
 * Copy username or password fast into clipboard.
 * Responsive user interface by bootstrap frontend framework.
 * Import and export functionality via open KeePass XML format. Many apps and desktop programs for all operating
@@ -21,7 +23,8 @@ Getting Started
 ------------------
 
 YiiPass uses SQlite database by default. That allows you to quickly check the YiiPass application without configuration
-hassle. The installation works via the [Composer PHP package manager](https://getcomposer.org/), so you can test YiiPass very quick.
+hassle. The installation works via the [Composer PHP package manager](https://getcomposer.org/), so you can test
+YiiPass very quick.
 
 If you're already using Composer, you need only _1 command to install_ YiiPass:
 
@@ -76,12 +79,11 @@ The SQlite database, which is used per default, is located in the application ro
 Known issues
 -----------------------
 
-YiiPass is still in development. Please mention the following issues. Help would be appreciated. Please consider
-the issues management functionality here on GitHub.
-* The passwords are saved plain in the database. For higher security, there should be implemented encryption. There's
-already a concept (also as graphic). Please ask me (jepster) if you want to learn more.
+YiiPass is still in development. Please mind the following issues. Help would be appreciated. Please consider
+the issues management functionality here on GitHub. Please ask me (jepster) if you want to learn more about the
+development.
 * Users grid table cannot be sized to mobile size in web frontend.
-* Last access is not beeing updated.
+* Last access field in account credential is not beeing updated.
 * Copy username and password buttons to clipboard are only working if the browser has flash. There's also a concept for
 handy copy-function in web browsers without flash.
 * If you edit an user account, the user password needs to be inserted.
