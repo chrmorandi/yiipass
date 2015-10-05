@@ -76,6 +76,52 @@ Now your database is feed with the schema.
 
 The SQlite database, which is used per default, is located in the application root folder. The filename is yiipass.sqlite.
 
+Troubleshooting
+-----------------------
+
+### PDO_SQLITE driver not present on Ubuntu Linux server.. what to do?
+
+Then try the following commands
+
+> sudo apt-get update
+>
+> sudo apt-get install php5-sqlite --fix-missing
+>
+> service apache2 restart
+
+The first one updates the package manager sources. The second one installs the PHP5 SQLite extension and fixes missing
+package sources. The third one restarts the Apache2 web server. If you're using the Nginx web server, the
+[Nginx Beginner's Guide](http://nginx.org/en/docs/beginners_guide.html) could help you out.
+
+### Mcrypt extension is missing on Ubuntu Linux server
+
+Then run the following commands.
+
+> sudo apt-get install php5-mcrypt
+>
+> php5enmod mcrypt
+>
+> service apache2 restart
+
+The first command installs the PHP5 mcrypt extension. The second one enabled the extension in PHP. The third restarts
+the Apache2 webserver. If you use Nginx f.e., the first both commands could help you also.
+
+### Data cannot be written into database 
+
+The there're errors like follows:
+
+
+> SQLSTATE[HY000]: General error: 8 attempt to write a readonly database
+>
+> or
+>
+> SQLSTATE[HY000]: General error: 14 unable to open database file
+
+Then make sure that the folder where the _yiipass.sqlite_ SQlite database resides, has the correct permissions. By
+default, this file is located in the application root-folder. The folder must be owned by www-data, if you use apache. 
+[Further information](http://www.dragonbe.com/2014/01/pdo-sqlite-error-unable-to-open.html)
+
+
 Known issues
 -----------------------
 
