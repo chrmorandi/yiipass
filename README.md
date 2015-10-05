@@ -117,8 +117,9 @@ The there're errors like follows:
 >
 > SQLSTATE[HY000]: General error: 14 unable to open database file
 
-Then make sure that the folder where the _yiipass.sqlite_ SQlite database resides, has the correct permissions. By
-default, this file is located in the application root-folder. The folder must be owned by www-data, if you use apache. 
+Then make sure that the folder where the _yiipass.sqlite_ SQlite database resides, has the correct permissions. Also
+the SQLite database itself must have the correct permissions. By default, this file is located in the application
+root-folder. The folder and the file must be owned by www-data, if you use apache. 
 [Further information](http://www.dragonbe.com/2014/01/pdo-sqlite-error-unable-to-open.html)
 
 
