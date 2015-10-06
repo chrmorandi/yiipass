@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\modules\yiipass\controllers\PasswordController;
-use app\modules\yiipass\models\Password;
+use app\modules\yiipass\models\TeamSecretForm;
 use app\modules\yiipass\models\User;
 use Yii;
 use yii\filters\AccessControl;
@@ -19,17 +19,17 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only'  => ['logout'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
+            'verbs'  => [
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -40,11 +40,11 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
+            'error'   => [
                 'class' => 'yii\web\ErrorAction',
             ],
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
+                'class'           => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
@@ -59,7 +59,7 @@ class SiteController extends Controller
     public function actionLogin()
     {
         // Before filled login form.
-        if(!isset(Yii::$app->request->post()['LoginForm']['username'])){
+        if (!isset(Yii::$app->request->post()['LoginForm']['username'])) {
             return $this->render('login', [
                 'model' => new LoginForm(),
             ]);
@@ -68,7 +68,7 @@ class SiteController extends Controller
         $identity = User::findByUsername([Yii::$app->request->post()['LoginForm']['username']]);
 
         // User not found by username.
-        if ($identity == null){
+        if ($identity == null) {
             // Login error.
             Yii::$app->session->setFlash('error', 'Wrong username. Please check.');
 
@@ -82,7 +82,11 @@ class SiteController extends Controller
         // Successful login.
         if (Yii::$app->security->validatePassword($inserted_password, $identity->password_hash)) {
             Yii::$app->user->login($identity);
+
+            PasswordController::teamSecretCheck();
+
             return $this->redirect('/');
+
         } else {
             // Login error.
             Yii::$app->session->setFlash('error', 'Wrong password. Please check.');

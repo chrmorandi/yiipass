@@ -5,6 +5,7 @@ namespace app\modules\yiipass\controllers;
 use app\modules\yiipass\models\User;
 use Yii;
 use app\modules\yiipass\models\Password;
+use app\modules\yiipass\models\TeamSecretForm;
 use app\modules\yiipass\models\PasswordSearch;
 use app\modules\yiipass\models\XmlUploadForm;
 use yii\web\Controller;
@@ -164,7 +165,7 @@ class PasswordController extends Controller
                         'password-id-' . $password['id']) === true || $is_admin == 1
             ) {
                 $password['password'] = $this->decrypt($password['password']);
-                $allowed_passwords[] = $password;
+                $allowed_passwords[]  = $password;
             }
 
         }
@@ -219,6 +220,8 @@ class PasswordController extends Controller
             return $this->redirect(['/site/login']);
         }
 
+        PasswordController::teamSecretCheck();
+
         $searchModel = new PasswordSearch();
 
         if (intval(Yii::$app->user->getIdentity()->is_admin) !== 1) {
@@ -247,6 +250,7 @@ class PasswordController extends Controller
             return $this->redirect(['/site/login']);
         }
 
+        PasswordController::teamSecretCheck();
 
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -313,6 +317,8 @@ class PasswordController extends Controller
             return $this->redirect(['/site/login']);
         }
 
+        PasswordController::teamSecretCheck();
+
         $model = $this->findModel($id);
 
         $all_users = User::find()
@@ -369,6 +375,8 @@ class PasswordController extends Controller
         if (Yii::$app->user->isGuest === true) {
             return $this->redirect(['/site/login']);
         }
+
+        PasswordController::teamSecretCheck();
 
         if (Yii::$app->user->getIdentity()->is_admin == 1) {
             $this->findModel($id)->delete();
@@ -569,4 +577,43 @@ class PasswordController extends Controller
         // To remove NULL padding. The question marks at the end of the string.
         return rtrim($plaintext_dec, "\0");
     }
+
+    public static function teamSecretCheck()
+    {
+        if (self::getTeamSecret() == null) {
+            return (new PasswordController('teamSecretCheck', Yii::$app->module))
+                ->redirect('yiipass/password/team-secret-form');
+        }
+    }
+
+    public static function getTeamSecret()
+    {
+        $cookie = \Yii::$app->getRequest()->getCookies()->getValue('team_secret');
+        return $cookie['value'];
+    }
+
+    public function actionTeamSecretForm()
+    {
+        $model = new TeamSecretForm();
+
+        if ($model->load(\Yii::$app->request->post())) {
+
+            if ($model->validate()) {
+                // all inputs are valid
+                $model->team_secret = Yii::$app->request->post()['team_secret'];
+                if ($model->upload()) {
+                    \Yii::$app->getSession()->setFlash('success', 'File successfully uploaded.');
+                    $this->redirect(array('/'));
+                }
+            } else {
+                // validation failed: $errors is an array containing error messages
+                $errors = $model->errors;
+            }
+        }
+
+        return $this->render('../team-secret/team-secret-form', [
+            'model' => new TeamSecretForm()
+        ]);
+    }
+
 }
