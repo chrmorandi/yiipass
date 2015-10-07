@@ -12,6 +12,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
+use yii\web\Cookie;
 
 /**
  * PasswordController implements the CRUD actions for Password model.
@@ -321,9 +322,6 @@ class PasswordController extends Controller
 
         $model = $this->findModel($id);
 
-        $all_users = User::find()
-            ->all();
-
         if ($model->load(Yii::$app->request->post())) {
 
             $sPassword = Yii::$app->request->post()['Password']['password'];
@@ -521,77 +519,88 @@ class PasswordController extends Controller
         }
     }
 
-    /**
-     * Encrypts plaintext using an algorithm. Secret from params config-file
-     * is used for encryption.
-     *
-     * @param string $plaintext
-     *
-     * @return string
-     */
-    public static function encrypt($plaintext)
+    public static function encrypt($sPlainText)
     {
-        # create a random IV to use with CBC encoding
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-        $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $sTeamSecret = self::getTeamSecret();
+        return \Yii::$app->security->encryptByKey($sPlainText, $sTeamSecret);
+    }
 
-        # creates a cipher text compatible with AES (Rijndael block size = 128)
-        # to keep the text confidential
-        # only suitable for encoded input that never ends with value 00h
-        # (because of default zero padding)
-        $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, Yii::$app->params['secret'],
-            $plaintext, MCRYPT_MODE_CBC, $iv);
-
-        # prepend the IV for it to be available for decryption
-        $ciphertext = $iv . $ciphertext;
-
-        # encode the resulting cipher text so it can be represented by a string
-        return base64_encode($ciphertext);
+    public static function decrypt($sEncrypted)
+    {
+        $sTeamSecret = self::getTeamSecret();
+        return \Yii::$app->security->decryptByKey($sEncrypted, $sTeamSecret);
     }
 
     /**
-     * Decrypts plaintext using an algorithm. Secret from params config-file
-     * is used for decryption.
-     *
-     * @param string $ciphertext_base64
-     *
-     * @return string
+     * Checks the team secret. If not set, the user will be redirected to the
+     * team secret form.
+     * @return \yii\web\Response|bool
      */
-    public static function decrypt($ciphertext_base64)
-    {
-        $ciphertext_dec = base64_decode($ciphertext_base64);
-
-        # create a random IV to use with CBC encoding
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-
-        # retrieves the IV, iv_size should be created using mcrypt_get_iv_size()
-        $iv_dec = substr($ciphertext_dec, 0, $iv_size);
-
-        # retrieves the cipher text (everything except the $iv_size in the front)
-        $ciphertext_dec = substr($ciphertext_dec, $iv_size);
-
-        # may remove 00h valued characters from end of plain text
-        $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, Yii::$app->params['secret'],
-            $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
-
-        // To remove NULL padding. The question marks at the end of the string.
-        return rtrim($plaintext_dec, "\0");
-    }
-
     public static function teamSecretCheck()
     {
-        if (self::getTeamSecret() == null) {
+        $password = Password::find()
+            ->andWhere(['not', ['password' => null]])
+            ->one();
+
+        if (isset($password->password) && self::decrypt($password->password) === false) {
+            \Yii::$app->session->setFlash('error', 'Inserted team secret is wrong.');
+        }
+
+        if (!isset($password->password)) {
+            \Yii::$app->session->setFlash('info', 'Please set the team secret for your team.');
+        }
+
+        // Initial login. No passwords saved, don't redirect back to the form.
+        if (self::getTeamSecret() !== null && !isset($password->password)) {
+            return true;
+        }
+
+        if (self::getTeamSecret() == null OR self::decrypt($password->password) === false) {
             return (new PasswordController('teamSecretCheck', Yii::$app->module))
                 ->redirect('yiipass/password/team-secret-form');
         }
     }
 
+    /**
+     * Returns the team secret value from cookie.
+     * @return mixed
+     */
     public static function getTeamSecret()
     {
-        $cookie = \Yii::$app->getRequest()->getCookies()->getValue('team_secret');
-        return $cookie['value'];
+        return \Yii::$app->getRequest()->getCookies()->getValue('teamSecret');
     }
 
+    /**
+     * Removes the team secret.
+     * @return null
+     */
+    public static function removeTeamSecret()
+    {
+        \Yii::$app->response->cookies->remove('teamSecret');
+    }
+
+    /**
+     * Sets the team secret in cookie.
+     * @param string $sTeamSecret The team secret.
+     *
+     * @return null
+     */
+    public function setTeamSecret($sTeamSecret)
+    {
+        $cookie = new Cookie([
+            'name'   => 'teamSecret',
+            'value'  => $sTeamSecret,
+            'expire' => time() + 86400 * 365,
+        ]);
+        \Yii::$app->getResponse()->getCookies()->add($cookie);
+    }
+
+    /**
+     * Handles the team secret form. If it's sent, the team secret will be
+     * saved and the user will be redirected to the account credentials
+     * listing.
+     * @return string
+     */
     public function actionTeamSecretForm()
     {
         $model = new TeamSecretForm();
@@ -599,12 +608,10 @@ class PasswordController extends Controller
         if ($model->load(\Yii::$app->request->post())) {
 
             if ($model->validate()) {
-                // all inputs are valid
-                $model->team_secret = Yii::$app->request->post()['team_secret'];
-                if ($model->upload()) {
-                    \Yii::$app->getSession()->setFlash('success', 'File successfully uploaded.');
-                    $this->redirect(array('/'));
-                }
+                $this->setTeamSecret($model->teamSecret);
+
+                \Yii::$app->getSession()->setFlash('success', 'Team secret successfully saved.');
+                $this->redirect(array('/'));
             } else {
                 // validation failed: $errors is an array containing error messages
                 $errors = $model->errors;

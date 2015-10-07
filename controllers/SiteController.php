@@ -100,7 +100,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
+        PasswordController::removeTeamSecret();
         return $this->goHome();
     }
 

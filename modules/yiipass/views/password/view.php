@@ -13,6 +13,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 // Make password visible.
 $model->password = PasswordController::decrypt($model->password);
+$debug = true;
+
 ?>
 <div class="password-view">
 

@@ -13,8 +13,16 @@ use yii\base\Model;
 class TeamSecretForm extends Model
 {
 
-    public $team_secret;
+    public $teamSecret;
 
-
+    /**
+     * @return array the validation rules.
+     */
+    public function rules()
+    {
+        return [
+            [['teamSecret'], 'required']
+        ];
+    }
 
 }

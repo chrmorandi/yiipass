@@ -37,3 +37,5 @@ phpunit.phar
 # config-files with account data.
 /config/db.php
 /config/params.php
+
+tests/_output/*
