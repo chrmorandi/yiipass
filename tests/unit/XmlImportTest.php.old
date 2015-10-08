@@ -6,10 +6,10 @@ use \yii\di\ServiceLocator;
 
 use app\modules\yiipass\models\Password;
 
-class XmlImportTest extends \PHPUnit_Framework_TestCase {
+class XmlImportTest extends \yii\codeception\TestCase {
 
     public function setUp(){
-        require_once(__DIR__ . '/yii_boot_phpunit.inc.php');
+        //require_once(__DIR__ . '/yii_boot_phpunit.inc.php');
     }
 
     public function testImport(){
@@ -22,7 +22,6 @@ class XmlImportTest extends \PHPUnit_Framework_TestCase {
                                         ->each();
 
         $xml_result = $xml->createKeePassValidXml($arr__passwords);
-        $debug = 'foo';
     }
 
 }

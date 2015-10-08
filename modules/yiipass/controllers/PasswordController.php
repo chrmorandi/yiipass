@@ -542,8 +542,11 @@ class PasswordController extends Controller
             ->andWhere(['not', ['password' => null]])
             ->one();
 
+        //die(Yii::$app->db->dsn);
+
         if (isset($password->password) && self::decrypt($password->password) === false) {
             \Yii::$app->session->setFlash('error', 'Inserted team secret is wrong.');
+            self::removeTeamSecret();
         }
 
         if (!isset($password->password)) {
@@ -557,7 +560,7 @@ class PasswordController extends Controller
 
         if (self::getTeamSecret() == null OR self::decrypt($password->password) === false) {
             return (new PasswordController('teamSecretCheck', Yii::$app->module))
-                ->redirect('yiipass/password/team-secret-form');
+                ->redirect('/yiipass/password/team-secret-form');
         }
     }
 

@@ -2,6 +2,11 @@
 
 namespace app\modules\yiipass\tests;
 
+use Yii;
+use yii\codeception\TestCase;
+use yii\web\Application;
+
+
 /**
  * Class KeePassXValidXmlExportTest
  *
@@ -13,9 +18,19 @@ namespace app\modules\yiipass\tests;
  *
  * @package app\modules\yiipass\tests
  */
-class KeePassXValidXmlExportTest extends \PHPUnit_Framework_TestCase {
+class KeePassXValidXmlExportTest extends TestCase {
 
-    /**
+    public $appConfig = '@tests/unit/_web.php';
+
+
+    protected function setUp()
+    {
+        // don't forget to call parent method that will setup Yii application
+        parent::setUp();
+        $debug = true;
+    }
+
+        /**
      * This method is a dataprovider for the testExport(); method. The
      * dataprovider is used for the "Mocking" testing method.
      *
@@ -27,7 +42,7 @@ class KeePassXValidXmlExportTest extends \PHPUnit_Framework_TestCase {
          * The data provider is run by PHPUnit before the setUp()
          * is called. So Yii is booted in the data provider method.
          */
-        require_once(__DIR__ . '/yii_boot_phpunit.inc.php');
+        require_once(__DIR__ . '/_bootstrap.php');
 
         // Gets $arr_for_xml to create xml for comparison.
         include_once(__DIR__ . '/fixtures/XmlExportArr.php');
@@ -35,8 +50,12 @@ class KeePassXValidXmlExportTest extends \PHPUnit_Framework_TestCase {
         // Gets $expected_xml to compare with $new_xml
         include_once(__DIR__ . '/fixtures/XmlExport.php');
 
-        $kpx = \Yii::$app->getModule('yiipass')->get('SimpleKeePassXmlService');
-        $new_xml = $kpx->createKeePassValidXml($arr_for_xml);
+        //$kpx = Yii::$app->getModule('yiipass')->get('SimpleKeePassXmlService');
+        //$new_xml = $kpx->createKeePassValidXml($arr_for_xml);
+
+        $new_xml = '';
+
+        (new Application($this->appConfig))->run();
 
         // The array for return. Every key is a parameter.
         $out[] = [
