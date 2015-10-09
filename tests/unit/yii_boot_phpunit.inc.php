@@ -15,10 +15,6 @@ defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
 defined('STDOUT') or define('STDOUT', fopen('php://stdout', 'w'));
 
-chdir('yiipass');
-
-die(getcwd());
-
 require('vendor/autoload.php');
 require('vendor/yiisoft/yii2/Yii.php');
 
