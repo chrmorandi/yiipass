@@ -3,6 +3,9 @@ use \AcceptanceTester;
 
 class LoginCest
 {
+    private static $delete_screenshots = true;
+
+
     public function _before(AcceptanceTester $I)
     {
         /**
@@ -29,6 +32,15 @@ class LoginCest
         rename('yiipass.sqlite.dev', 'yiipass.sqlite');
     }
 
+    public function _afterSuite()
+    {
+        // this is just to make sure webDriver is cleared after suite
+        if (isset($this->webDriver)) {
+            $this->webDriver->quit();
+            unset($this->webDriver);
+        }
+    }
+
     // tests
     public function tryToTest(AcceptanceTester $I)
     {
@@ -42,15 +54,20 @@ class LoginCest
         $I->fillField('LoginForm[password]', 'admin');
         $I->click('login-button');
 
+        $I->waitForText('Please set the team secret for your team.');
+
         // Team secret setting
         $I->see('Please set the team secret for your team.');
         $I->fillField('TeamSecretForm[teamSecret]', 'myTeamSecret123');
         $I->click('Submit');
+        $I->waitForText('Team secret successfully saved.');
         $I->see('Team secret successfully saved.');
         $I->seeCookie('teamSecret');
 
         // Save password
+        $I->click('Actions');
         $I->click('Add Password');
+        $I->see('Create Password');
         $I->fillField('Password[title]', 'test-password-title');
         $I->fillField('Password[group]', 'test-group');
         $I->fillField('Password[password]', 'test-password');
@@ -75,10 +92,11 @@ class LoginCest
         $I->resetCookie('teamSecret');
 
         $I->click('Submit');
-        $I->see('Team secret successfully saved.');
+        $I->waitForText('Team secret successfully saved.');
         $I->amOnPage('/');
         $I->see('test-password-title');
         $I->click('test-password-title');
         $I->see('test-password');
     }
+
 }
