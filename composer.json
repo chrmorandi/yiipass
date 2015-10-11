@@ -49,5 +49,8 @@
             "npm-asset-library": "vendor/npm",
             "bower-asset-library": "vendor/bower"
         }
+    },
+    "autoload": {
+        "psr-4": {"app\\modules\\yiipass\\Module": "modules/yiipass/Module.php"}
     }
 }
