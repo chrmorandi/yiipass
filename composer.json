@@ -51,6 +51,6 @@
         }
     },
     "autoload": {
-        "psr-4": {"app\\modules\\yiipass\\Module": "modules/yiipass/Module.php"}
+        "psr-4": {"app\\modules\\yiipass\\": "modules/yiipass/"}
     }
 }
