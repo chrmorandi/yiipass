@@ -13,23 +13,23 @@ class LoginCest
          * the dev database can be renamed for the usage
          * of a clean test-database.
          */
-        if (!file_exists('yiipass.sqlite.dev')) {
-            rename('yiipass.sqlite', 'yiipass.sqlite.dev');
+        if (!file_exists('db.sqlite.dev')) {
+            rename('db.sqlite', 'db.sqlite.dev');
         } else {
             /**
              * If the last test broke, delete the database.
              * It could contain garbage data.
              */
-            unlink('yiipass.sqlite');
+            unlink('db.sqlite');
         }
 
-        copy('tests/_data/yiipass.sqlite', 'yiipass.sqlite');
+        copy('tests/_data/db.sqlite', 'db.sqlite');
     }
 
     public function _after(AcceptanceTester $I)
     {
-        unlink('yiipass.sqlite');
-        rename('yiipass.sqlite.dev', 'yiipass.sqlite');
+        unlink('db.sqlite');
+        rename('db.sqlite.dev', 'db.sqlite');
     }
 
     public function _afterSuite()

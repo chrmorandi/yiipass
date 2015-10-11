@@ -19,4 +19,13 @@ class Module extends \yii\base\Module
         ]);
 
     }
+
+    /**
+     * Copies an empty SQlite db into production.
+     * @return null
+     */
+    public static function copyEmptySqliteDbOnInstall()
+    {
+        copy('db.empty.sqlite', 'db.sqlite');
+    }
 }

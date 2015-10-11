@@ -28,7 +28,8 @@
     },
     "scripts": {
         "post-create-project-cmd": [
-            "yii\\composer\\Installer::postCreateProject"
+            "yii\\composer\\Installer::postCreateProject",
+            "app\\modules\\yiipass\\Module::copyEmptySqliteDbOnInstall"
         ]
     },
     "extra": {
