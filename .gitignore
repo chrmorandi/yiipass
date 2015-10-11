@@ -33,6 +33,7 @@ phpunit.phar
 /web/assets
 
 # uploads
+/db.sqlite
 /web/uploads/*
 
 # config-files with account data.
