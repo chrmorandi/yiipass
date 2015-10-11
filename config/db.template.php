@@ -2,8 +2,8 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yiipass',
-    'username' => 'some-username',
-    'password' => 'some-password',
+    'dsn' => 'sqlite:../db.sqlite',
+    'username' => '',
+    'password' => '',
     'charset' => 'utf8',
 ];

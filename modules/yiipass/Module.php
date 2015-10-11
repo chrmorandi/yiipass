@@ -21,11 +21,29 @@ class Module extends \yii\base\Module
     }
 
     /**
-     * Copies an empty SQlite db into production.
+     * Copies an empty SQlite db into application.
      * @return null
      */
     public static function copyEmptySqliteDbOnInstall()
     {
         copy('db.empty.sqlite', 'db.sqlite');
+    }
+
+    /**
+     * Copies an empty db config template into application.
+     * @return null
+     */
+    public static function copyDbConfigTemplateOnInstall()
+    {
+        copy('config/db.template.php', 'config/db.php');
+    }
+
+    /**
+     * Copies an empty params config template into application.
+     * @return null
+     */
+    public static function copyParamsConfigTemplateOnInstall()
+    {
+        copy('config/params.template.php', 'config/params.php');
     }
 }
