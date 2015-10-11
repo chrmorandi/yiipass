@@ -26,8 +26,7 @@ class AdminController extends Controller
     }
 
     /**
-     * This command removes all auth assignments for a given
-     * auth id, which can be part of an account credential.
+     * Removes all auth assignments for given auth id.
      *
      * @param id $id The auth item id.
      * @return null

@@ -19,7 +19,7 @@ class m150719_121506_user_init extends Migration
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT \'10\'',
             'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
             'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'is_admin',Schema::TYPE_INTEGER
+            'is_admin' => Schema::TYPE_INTEGER
         ]);
     }
 
