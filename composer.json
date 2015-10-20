@@ -31,7 +31,8 @@
             "yii\\composer\\Installer::postCreateProject",
             "app\\modules\\yiipass\\Module::copyEmptySqliteDbOnInstall",
             "app\\modules\\yiipass\\Module::copyDbConfigTemplateOnInstall",
-            "app\\modules\\yiipass\\Module::copyParamsConfigTemplateOnInstall"
+            "app\\modules\\yiipass\\Module::copyParamsConfigTemplateOnInstall",
+            "app\\modules\\yiipass\\Module::createEmptyUploadsFolder"
         ]
     },
     "extra": {

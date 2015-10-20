@@ -46,4 +46,13 @@ class Module extends \yii\base\Module
     {
         copy('config/params.template.php', 'config/params.php');
     }
+
+    /**
+     * Creates an empty uploads folders (for XML uploads).
+     * @return null
+     */
+    public static function createEmptyUploadsFolder()
+    {
+        mkdir('web/uploads');
+    }
 }

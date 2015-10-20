@@ -15,7 +15,6 @@ namespace app\modules\yiipass\tests;
  */
 class KeePassXValidXmlExportTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * This method is a dataprovider for the testExport(); method. The
      * dataprovider is used for the "Mocking" testing method.
