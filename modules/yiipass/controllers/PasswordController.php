@@ -552,15 +552,23 @@ class PasswordController extends Controller
             ->andWhere(['not', ['password' => null]])
             ->one();
 
-        //die(Yii::$app->db->dsn);
+        $post_data = \Yii::$app->request->post();
 
-        if (isset($password->password) && self::decrypt($password->password) === false) {
+        if (self::getTeamSecret() !== null && isset($password->password)
+            && self::decrypt($password->password) === false) {
             \Yii::$app->session->setFlash('error', 'Inserted team secret is wrong.');
             self::removeTeamSecret();
         }
 
+        if (!self::getTeamSecret() && isset($password->password)
+            && self::decrypt($password->password) === false) {
+            \Yii::$app->session->setFlash('info', 'Please insert the team secret.');
+            self::removeTeamSecret();
+        }
+
         if (!isset($password->password)) {
-            \Yii::$app->session->setFlash('info', 'Please set the team secret for your team.');
+            \Yii::$app->session->setFlash('info', 'Please set initially the team secret for your team. ' .
+                'Mind that the team secret cannot be changed, after any account credential is being saved.');
         }
 
         // Initial login. No passwords saved, don't redirect back to the form.
