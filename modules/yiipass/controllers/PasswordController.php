@@ -529,12 +529,24 @@ class PasswordController extends Controller
         }
     }
 
+    /**
+     * Encrypts a string with encryption method from Yii framework.
+     * @param $sPlainText
+     *
+     * @return string
+     */
     public static function encrypt($sPlainText)
     {
         $sTeamSecret = self::getTeamSecret();
         return \Yii::$app->security->encryptByKey($sPlainText, $sTeamSecret);
     }
 
+    /**
+     * Decrypts a string with decryption method from Yii framework.
+     * @param $sEncrypted
+     *
+     * @return bool|string
+     */
     public static function decrypt($sEncrypted)
     {
         $sTeamSecret = self::getTeamSecret();
