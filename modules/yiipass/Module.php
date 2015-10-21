@@ -21,13 +21,15 @@ class Module extends \yii\base\Module
     }
 
     /**
-     * Copies an empty SQlite db into application.
+     * Copies an empty SQlite db into application. Additionally the permissions
+     * for the folder and the db-file are set.
      * @return null
      */
     public static function copyEmptySqliteDbOnInstall()
     {
         copy('modules/yiipass/assets/db/db.empty.sqlite', 'modules/yiipass/assets/db/db.sqlite');
         chmod('modules/yiipass/assets/db/db.sqlite', 0777);
+        chmod('modules/yiipass/assets/db', 0777);
     }
 
     /**
