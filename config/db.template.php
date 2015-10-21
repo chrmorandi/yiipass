@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'sqlite:../db.sqlite',
+    'dsn' => 'sqlite:../modules/yiipass/assets/db/db.sqlite',
     'username' => '',
     'password' => '',
     'charset' => 'utf8',

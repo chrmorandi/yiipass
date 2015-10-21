@@ -26,7 +26,7 @@ class Module extends \yii\base\Module
      */
     public static function copyEmptySqliteDbOnInstall()
     {
-        copy('db.empty.sqlite', 'db.sqlite');
+        copy('modules/yiipass/assets/db/db.empty.sqlite', 'modules/yiipass/assets/db/db.sqlite');
         chmod('db.sqlite', 0777);
     }
 
