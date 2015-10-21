@@ -54,5 +54,6 @@ class Module extends \yii\base\Module
     public static function createEmptyUploadsFolder()
     {
         mkdir('web/uploads');
+        chmod('web/uploads', 0777);
     }
 }
