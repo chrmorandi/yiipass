@@ -92,13 +92,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'group',
             ['class'    => 'yii\grid\ActionColumn',
-             'template' => '{open_url} {copy} {update}',
+             'template' => '{copy}',
              'buttons'  => [
-                 'open_url'      => function ($url, $model, $key) {
-                                         if ($model->url !== '') {
-                                             return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
-                                         }
-                                     },
                  'copy' => function ($url, $model, $key) {
                                          return '<button type="button" class="copy_username copy_button"
                                             data-toggle="modal" data-target="#mobileCopyModal"
@@ -107,6 +102,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                             data-title="' . $model->title . '"
                                             title="Copy details">Copy</button>';
                                      }
+             ]
+            ],
+            ['class'    => 'yii\grid\ActionColumn',
+             'template' => '{update}',
+             'buttons'  => [
+                 'open_url'      => function ($url, $model, $key) {
+                                         if ($model->url !== '') {
+                                             return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
+                                         }
+                                     },
              ]
             ],
         ],
@@ -119,7 +124,16 @@ $this->params['breadcrumbs'][] = $this->title;
          * Increase then the array key of columns.
          */
         // array_unshift($arr_widget['columns'], ['class' => 'yii\grid\CheckboxColumn']);
-        $arr_widget['columns']['2']['template'] .= '{delete} ';
+        $arr_widget['columns'][] = ['class'    => 'yii\grid\ActionColumn',
+                                    'template' => '{delete}',
+                                    'buttons'  => [
+                                        'open_url'      => function ($url, $model, $key) {
+                                            if ($model->url !== '') {
+                                                return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
+                                            }
+                                        },
+                                    ]
+                                    ];
     }
 
     ?>
