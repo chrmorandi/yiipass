@@ -3,6 +3,7 @@
 namespace app\modules\yiipass\controllers;
 
 use app\modules\yiipass\models\User;
+use Detection\MobileDetect;
 use Yii;
 use app\modules\yiipass\models\Password;
 use app\modules\yiipass\models\TeamSecretForm;
@@ -232,10 +233,19 @@ class PasswordController extends Controller
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         }
 
-        return $this->render('index', [
-            'searchModel'  => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        $mobile_detect = new MobileDetect();
+        if ($mobile_detect->isMobile() === false) {
+            return $this->render('index', [
+                'searchModel'  => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            return $this->render('index_mobile', [
+                'searchModel'  => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+
 
     }
 

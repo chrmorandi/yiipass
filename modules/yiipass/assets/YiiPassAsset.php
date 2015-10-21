@@ -9,7 +9,7 @@ class YiiPassAsset extends AssetBundle
     public $sourcePath = '@yiipass-assets';
     public $js = [
         'js/ZeroClipboard/ZeroClipboard.min.js',
-        'js/Main.js',
+        'js/MainDesktop.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
