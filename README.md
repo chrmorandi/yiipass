@@ -129,11 +129,7 @@ Known issues
 YiiPass is still in development. Please mind the following issues. Help would be appreciated. Please consider
 the issues management functionality here on GitHub. Please ask me (jepster) if you want to learn more about the
 development.
-* Users grid table cannot be sized to mobile size in web frontend.
 * Last access field in account credential is not beeing updated.
-* Copy username and password buttons to clipboard are only working if the browser has flash. There's also a concept for
-handy copy-function in web browsers without flash.
-* If you edit an user account, the user password needs to be inserted.
 * There should be a second password form field on the account credentials edit page. That way there would be more
 control about the password validity.
 
