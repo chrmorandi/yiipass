@@ -55,16 +55,6 @@ document.getElementById("generate_password").onclick = function(){
     document.getElementById("password-password").value = ret_password;
 };
 
-document.getElementById("toggle_password").onclick = function() {
-    if (document.getElementById("password-password").getAttribute("type") == "password") {
-        document.getElementById("password-password").setAttribute("type", "text");
-        document.getElementById("toggle_password").innerHTML = 'Hide password';
-    } else {
-        document.getElementById("password-password").setAttribute("type", "password");
-        document.getElementById("toggle_password").innerHTML = 'Show Password';
-    }
-}
-
 // services:
 
 /**

@@ -14,7 +14,6 @@ use yii\helpers\BaseHtml;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= Html::button('Generate Password', array('id' => 'generate_password')) ?>
-    <?= Html::button('Toggle Password', array('id' => 'toggle_password')) ?>
 
     <p>
         <?= BaseHtml::hiddenInput('Password[id]', $model->id) ?>
@@ -25,7 +24,7 @@ use yii\helpers\BaseHtml;
 
         <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'comment')->textarea(['rows' => 6]) ?>
 
