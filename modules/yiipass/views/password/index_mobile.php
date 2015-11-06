@@ -117,24 +117,21 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ];
 
-    // If user is admin, set checkbox column at the beginning of the columns.
-    if (Yii::$app->user->identity->is_admin) {
-        /**
-         * If checkboxes will be needed, comment the following line in.
-         * Increase then the array key of columns.
-         */
-        // array_unshift($arr_widget['columns'], ['class' => 'yii\grid\CheckboxColumn']);
-        $arr_widget['columns'][] = ['class'    => 'yii\grid\ActionColumn',
-                                    'template' => '{delete}',
-                                    'buttons'  => [
-                                        'open_url'      => function ($url, $model, $key) {
-                                            if ($model->url !== '') {
-                                                return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
-                                            }
-                                        },
-                                    ]
-                                    ];
-    }
+    /**
+     * If checkboxes will be needed, comment the following line in.
+     * Increase then the array key of columns.
+     */
+    // array_unshift($arr_widget['columns'], ['class' => 'yii\grid\CheckboxColumn']);
+    $arr_widget['columns'][] = ['class'    => 'yii\grid\ActionColumn',
+                                'template' => '{delete}',
+                                'buttons'  => [
+                                    'open_url'      => function ($url, $model, $key) {
+                                        if ($model->url !== '') {
+                                            return '<a href="' . $model->url . '" title="Open URL in new window" target="_blank">Open URL</a>';
+                                        }
+                                    },
+                                ]
+                                ];
 
     ?>
 

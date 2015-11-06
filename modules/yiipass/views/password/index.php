@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'group',
             ['class'    => 'yii\grid\ActionColumn',
-             'template' => '{open_url} {copy_username} {copy_password} {update}',
+             'template' => '{open_url} {copy_username} {copy_password}',
              'buttons'  => [
                  'open_url'      => function ($url, $model, $key) {
                                          if ($model->url !== '') {
@@ -78,18 +78,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                      }
              ]
             ],
+            ['class'    => 'yii\grid\ActionColumn',
+             'template' => '{update}',
+            ],
+            ['class'    => 'yii\grid\ActionColumn',
+             'template' => '{delete}',
+            ],
         ],
     ];
-
-    // If user is admin, set checkbox column at the beginning of the columns.
-    if (Yii::$app->user->identity->is_admin) {
-        /**
-         * If checkboxes will be needed, comment the following line in.
-         * Increase then the array key of columns.
-         */
-        // array_unshift($arr_widget['columns'], ['class' => 'yii\grid\CheckboxColumn']);
-        $arr_widget['columns']['2']['template'] .= '{delete} ';
-    }
 
     ?>
 
