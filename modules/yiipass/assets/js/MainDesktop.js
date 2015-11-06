@@ -22,11 +22,6 @@ client.on( "ready", function( readyEvent ) {
     } );
 
     client.on( "aftercopy", function( event ) {
-        // `this` === `client`
-        // `event.target` === the element that was clicked
-        // hide clicked element
-        //event.target.style.display = "none";
         event.target.innerHTML = 'Copied';
-        //console.log(event.target.innerHTML);
     } );
 } );

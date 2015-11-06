@@ -359,13 +359,16 @@ class PasswordController extends Controller
                     $users_account_credential_ids[$user->id] = Yii::$app->getAuthManager()->getPermissionsByUser($user->id);
                 }
 
-                $user_checkboxes                       = $this->getHtmlCheckboxesForUsers(
+                $user_checkboxes = $this->getHtmlCheckboxesForUsers(
                     $all_users,
                     $users_account_credential_ids,
                     $model
                 );
                 $elements_to_render['user_checkboxes'] = $user_checkboxes;
             }
+
+            // Make password visible for the toggle button.
+            $elements_to_render['model']->password = $this->decrypt($elements_to_render['model']->password);
 
             return $this->render('update', $elements_to_render);
         }
