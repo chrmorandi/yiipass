@@ -203,6 +203,9 @@ class PasswordController extends Controller
                 $import_xml = new ImportXmlController();
                 $import_xml->get($model->file_path);
 
+                // Delete uploaded file.
+                unlink($model->file_path);
+
                 \Yii::$app->getSession()->setFlash('success', 'File successfully uploaded.');
                 $this->redirect(array('/'));
             }
