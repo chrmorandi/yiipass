@@ -41,3 +41,6 @@ phpunit.phar
 /config/params.php
 
 tests/_output/*
+
+# Don't push production db.
+/modules/yiipass/assets/db/db.sqlite
