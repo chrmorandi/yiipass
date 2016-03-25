@@ -8,7 +8,7 @@ class YiiPassMobileAsset extends AssetBundle
 {
     public $sourcePath = '@yiipass-assets';
     public $js = [
-        'js/MainMobile.js',
+        'js/Main.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
