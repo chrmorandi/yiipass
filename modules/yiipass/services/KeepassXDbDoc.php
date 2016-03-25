@@ -23,7 +23,7 @@ class KeepassXDbDoc extends \DOMDocument
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct('1.0', 'utf-8');
         $this->registerNodeClass('DOMElement', 'app\modules\yiipass\services\KeepassXGroup');
         $db = $this->createElement('database');
         $this->appendChild($db);
