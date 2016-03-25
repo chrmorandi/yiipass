@@ -3,7 +3,6 @@
 namespace app\controllers;
 
 use app\modules\yiipass\controllers\PasswordController;
-use app\modules\yiipass\models\TeamSecretForm;
 use app\modules\yiipass\models\User;
 use Yii;
 use yii\filters\AccessControl;
