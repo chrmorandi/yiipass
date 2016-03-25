@@ -22,7 +22,7 @@ use yii\helpers\BaseHtml;
 
 <?php $form = ActiveForm::begin(['id' => 'team-secret-form']) ?>
 
-    <?= $form->field($model, 'teamSecret')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'teamSecret')->passwordInput(['maxlength' => true]) ?>
 
     <button>Submit</button>
 
