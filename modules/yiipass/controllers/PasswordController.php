@@ -266,11 +266,13 @@ class PasswordController extends Controller
      */
     public function actionView($id)
     {
-        if (Yii::$app->user->isGuest === true) {
-            return $this->redirect(['/site/login']);
-        }
+        if (Yii::$app->params['single_user_mode'] === FALSE) {
+            if (Yii::$app->user->isGuest === TRUE) {
+                return $this->redirect(['/site/login']);
+            }
 
-        PasswordController::teamSecretCheck();
+            PasswordController::teamSecretCheck();
+        }
 
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -285,8 +287,10 @@ class PasswordController extends Controller
      */
     public function actionCreate()
     {
-        if (Yii::$app->user->isGuest === true) {
-            return $this->redirect(['/site/login']);
+        if (Yii::$app->params['single_user_mode'] === FALSE) {
+            if (Yii::$app->user->isGuest === TRUE) {
+                return $this->redirect(['/site/login']);
+            }
         }
 
         $model = new Password();
@@ -300,9 +304,15 @@ class PasswordController extends Controller
 
             $model->save();
 
+            if (Yii::$app->params['single_user_mode'] === FALSE) {
+                $iUserId = Yii::$app->user->id;
+            } else {
+                $iUserId = 1;
+            }
+
             // The user which has created the password can access it.
             UserController::addPermissionToUser(
-                Yii::$app->user->id,
+                $iUserId,
                 'password-id-' . $model->id
             );
 
@@ -313,11 +323,13 @@ class PasswordController extends Controller
         } else {
             $elements_to_render = array('model' => $model);
 
-            if (Yii::$app->user->getIdentity()->is_admin == 1) {
-                $all_users                             = User::find()
-                    ->all();
-                $user_checkboxes                       = $this->getHtmlCheckboxesForUsers($all_users, false, $model);
-                $elements_to_render['user_checkboxes'] = $user_checkboxes;
+            if (Yii::$app->params['single_user_mode'] === FALSE) {
+                if (Yii::$app->user->getIdentity()->is_admin == 1) {
+                    $all_users                             = User::find()
+                      ->all();
+                    $user_checkboxes                       = $this->getHtmlCheckboxesForUsers($all_users, FALSE, $model);
+                    $elements_to_render['user_checkboxes'] = $user_checkboxes;
+                }
             }
 
             return $this->render('create', $elements_to_render);
@@ -333,11 +345,13 @@ class PasswordController extends Controller
      */
     public function actionUpdate($id)
     {
-        if (Yii::$app->user->isGuest === true) {
-            return $this->redirect(['/site/login']);
-        }
+        if (Yii::$app->params['single_user_mode'] === FALSE) {
+            if (Yii::$app->user->isGuest === TRUE) {
+                return $this->redirect(['/site/login']);
+            }
 
-        PasswordController::teamSecretCheck();
+            PasswordController::teamSecretCheck();
+        }
 
         $model = $this->findModel($id);
 
@@ -361,19 +375,22 @@ class PasswordController extends Controller
 
             $elements_to_render = array('model' => $model);
 
-            if (Yii::$app->user->getIdentity()->is_admin == 1) {
-                // Enrich users array with account credentials info.
-                $all_users = User::find()->all();
-                foreach ($all_users as $user) {
-                    $users_account_credential_ids[$user->id] = Yii::$app->getAuthManager()->getPermissionsByUser($user->id);
-                }
+            if (Yii::$app->params['single_user_mode'] === FALSE) {
+                if (Yii::$app->user->getIdentity()->is_admin == 1) {
+                    // Enrich users array with account credentials info.
+                    $all_users = User::find()->all();
+                    foreach ($all_users as $user) {
+                        $users_account_credential_ids[$user->id] = Yii::$app->getAuthManager()
+                          ->getPermissionsByUser($user->id);
+                    }
 
-                $user_checkboxes = $this->getHtmlCheckboxesForUsers(
-                    $all_users,
-                    $users_account_credential_ids,
-                    $model
-                );
-                $elements_to_render['user_checkboxes'] = $user_checkboxes;
+                    $user_checkboxes                       = $this->getHtmlCheckboxesForUsers(
+                      $all_users,
+                      $users_account_credential_ids,
+                      $model
+                    );
+                    $elements_to_render['user_checkboxes'] = $user_checkboxes;
+                }
             }
 
             // Make password visible for the toggle button.
@@ -392,13 +409,16 @@ class PasswordController extends Controller
      */
     public function actionDelete($id)
     {
-        if (Yii::$app->user->isGuest === true) {
-            return $this->redirect(['/site/login']);
+        if (Yii::$app->params['single_user_mode'] === FALSE) {
+            if (Yii::$app->user->isGuest === TRUE) {
+                return $this->redirect(['/site/login']);
+            }
+
+            PasswordController::teamSecretCheck();
         }
 
-        PasswordController::teamSecretCheck();
-
-        if (Yii::$app->user->getIdentity()->is_admin == 1) {
+        if (Yii::$app->params['single_user_mode'] === TRUE OR
+          Yii::$app->user->getIdentity()->is_admin == 1) {
             $this->findModel($id)->delete();
 
             // Remove roles and permissions.
