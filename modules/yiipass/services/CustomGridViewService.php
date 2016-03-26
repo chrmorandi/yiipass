@@ -71,7 +71,8 @@ class CustomGridViewService extends GridView {
                 // Groups for which the user has access.
                 $allowed_acc_groups = array();
 
-                if (intval(\Yii::$app->user->identity->is_admin) !== 1){
+                if (is_object(\Yii::$app->user->identity) &&
+                  intval(\Yii::$app->user->identity->is_admin) !== 1){
                     foreach ($acc_groups as $a_group) {
                         // Iterate all groups and check if user is allowed.
                         if (PasswordController::checkAccessByAccId($a_group['id'])){

@@ -10,6 +10,7 @@ use app\modules\yiipass\models\TeamSecretForm;
 use app\modules\yiipass\models\PasswordSearch;
 use app\modules\yiipass\models\XmlUploadForm;
 use yii\web\Controller;
+use yii\web\IdentityInterface;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
@@ -221,18 +222,23 @@ class PasswordController extends Controller
      */
     public function actionIndex()
     {
-        if (Yii::$app->user->isGuest === true) {
-            return $this->redirect(['/site/login']);
-        }
+        if (Yii::$app->params['single_user_mode'] === FALSE) {
+            if (Yii::$app->user->isGuest === true) {
+                return $this->redirect(['/site/login']);
+            }
 
-        PasswordController::teamSecretCheck();
+            PasswordController::teamSecretCheck();
 
-        $searchModel = new PasswordSearch();
+            $searchModel = new PasswordSearch();
 
-        if (intval(Yii::$app->user->getIdentity()->is_admin) !== 1) {
-            $account_credential_ids = $this->getAccountCredentials(Yii::$app->user->id);
-            $dataProvider           = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
+            if (intval(Yii::$app->user->getIdentity()->is_admin) !== 1) {
+                $account_credential_ids = $this->getAccountCredentials(Yii::$app->user->id);
+                $dataProvider           = $searchModel->search(Yii::$app->request->queryParams, $account_credential_ids);
+            } else {
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            }
         } else {
+            $searchModel = new PasswordSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         }
 
@@ -569,8 +575,6 @@ class PasswordController extends Controller
         $password = Password::find()
             ->andWhere(['not', ['password' => null]])
             ->one();
-
-        $post_data = \Yii::$app->request->post();
 
         if (self::getTeamSecret() !== null && isset($password->password)
             && self::decrypt($password->password) === false) {

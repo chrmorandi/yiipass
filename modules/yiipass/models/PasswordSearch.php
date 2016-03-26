@@ -50,7 +50,7 @@ class PasswordSearch extends Password
         $this->load($params);
 
         if (!$this->validate() || (empty($account_credential_ids)
-                && intval(Yii::$app->user->getIdentity()->is_admin) !== 1)) {
+                && $this->isUserAllowedToSeeAllPasswords() === FALSE)) {
             // uncomment the following line if you do not want to return any records when validation fails
             $query->where('0=1');
             return $dataProvider;
@@ -76,5 +76,25 @@ class PasswordSearch extends Password
         }
 
         return $dataProvider;
+    }
+
+    /**
+     * Returns TRUE if user is either admin or application is in single
+     * user mode.
+     *
+     * @return bool
+     */
+    private function isUserAllowedToSeeAllPasswords() {
+        if (\Yii::$app->user->isGuest === FALSE) {
+            if (\Yii::$app->user->getIdentity()->is_admin === TRUE) {
+                return TRUE;
+            }
+        }
+
+        if (\Yii::$app->params['single_user_mode'] === TRUE) {
+            return TRUE;
+        }
+
+        return FALSE;
     }
 }

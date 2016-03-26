@@ -35,24 +35,47 @@ AppAsset::register($this);
             ]);
 
             // Add admin info to username in navigation bar.
-            if(Yii::$app->user->identity->is_admin == 1) {
+            if(is_object(\Yii::$app->user->identity) && Yii::$app->user->identity->is_admin == 1) {
                 $displayed_username = Yii::$app->user->identity->username . ' - admin';
-            } else {
+            } elseif (is_object(\Yii::$app->user->identity)) {
                 $displayed_username = Yii::$app->user->identity->username;
+            }
+
+            $aNavWidgetUserActions = array();
+
+            if (\Yii::$app->params['single_user_mode'] === FALSE) {
+                if (Yii::$app->user->isGuest) {
+                    $aNavWidgetUserActions = [
+                        'label' => 'Login', 'url' => ['/site/login']
+                    ];
+                } else {
+                    if (Yii::$app->user->identity->is_admin == 1) {
+                        $aNavWidgetUserActions = [
+                            ['label' => 'Users', 'url' => ['/users']]
+                        ];
+                    } else {
+                        $aNavWidgetUserActions = [
+                          'label' => 'Account Credentials', 'url' => ['/']
+                        ];
+                    }
+
+                    $aNavWidgetUserActions[] = ['label' => 'Logout (' . $displayed_username . ')',
+                                                'url' => ['/site/logout'],
+                                                'linkOptions' => ['data-method' => 'post']];
+
+                }
             }
 
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => [
-                    ['label' => 'Home', 'url' => ['/site/index']],
-                    //['label' => 'About', 'url' => ['/site/about']],
-                    Yii::$app->user->isGuest ?
-                        ['label' => 'Login', 'url' => ['/site/login']] :
-                        ['label' => 'Account Credentials', 'url' => ['/']],
-                        (Yii::$app->user->identity->is_admin == 1) ? ['label' => 'Users', 'url' => ['/users']] : '',
-                        ['label' => 'Logout (' . $displayed_username . ')',
-                            'url' => ['/site/logout'],
-                            'linkOptions' => ['data-method' => 'post']]
+                    ['label' => 'Home', 'url' => ['/yiipass/password/index']],
+                    /**
+                     * Display user actions if applications is not in
+                     * single user mode.
+                     */
+                    empty($aNavWidgetUserActions) ? '' :
+                    $aNavWidgetUserActions
                 ],
             ]);
             NavBar::end();
