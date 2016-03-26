@@ -147,7 +147,8 @@ class PasswordController extends Controller
      */
     public function actionDownloadPasswordsAsKeePassXml()
     {
-        if (Yii::$app->user->isGuest === true) {
+        if (Yii::$app->params['single_user_mode'] === FALSE &&
+          Yii::$app->user->isGuest === true) {
             return $this->redirect(['/site/login']);
         }
 
@@ -192,7 +193,8 @@ class PasswordController extends Controller
      */
     public function actionUploadNewXml()
     {
-        if (Yii::$app->user->isGuest === true) {
+        if (Yii::$app->params['single_user_mode'] === FALSE &&
+          Yii::$app->user->isGuest === true) {
             return $this->redirect(['/site/login']);
         }
 
