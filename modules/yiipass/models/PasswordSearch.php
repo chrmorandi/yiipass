@@ -86,7 +86,7 @@ class PasswordSearch extends Password
      */
     private function isUserAllowedToSeeAllPasswords() {
         if (\Yii::$app->user->isGuest === FALSE) {
-            if (\Yii::$app->user->getIdentity()->is_admin === TRUE) {
+            if (\Yii::$app->user->getIdentity()->is_admin == 1) {
                 return TRUE;
             }
         }

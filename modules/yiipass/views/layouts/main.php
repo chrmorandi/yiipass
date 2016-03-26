@@ -41,7 +41,7 @@ AppAsset::register($this);
                 $displayed_username = Yii::$app->user->identity->username;
             }
 
-            $aNavWidgetUserActions = array();
+            $aNavWidgetUserActions[] = ['label' => 'Home', 'url' => ['/yiipass/password/index']];
 
             if (\Yii::$app->params['single_user_mode'] === FALSE) {
                 if (Yii::$app->user->isGuest) {
@@ -50,34 +50,34 @@ AppAsset::register($this);
                     ];
                 } else {
                     if (Yii::$app->user->identity->is_admin == 1) {
-                        $aNavWidgetUserActions = [
-                            ['label' => 'Users', 'url' => ['/users']]
-                        ];
-                    } else {
-                        $aNavWidgetUserActions = [
-                          'label' => 'Account Credentials', 'url' => ['/']
-                        ];
+                        $aNavWidgetUserActions[] = [
+                            'label' => 'Users', 'url' => ['/users'],
+                          ]
+                        ;
                     }
 
-                    $aNavWidgetUserActions[] = ['label' => 'Logout (' . $displayed_username . ')',
-                                                'url' => ['/site/logout'],
-                                                'linkOptions' => ['data-method' => 'post']];
+                    $aNavWidgetUserActions[] = [
+                      'label' => 'Logout (' . $displayed_username . ')',
+                      'url' => ['/site/logout'],
+                      'linkOptions' => ['data-method' => 'post']
+                    ];
 
                 }
             }
 
-            echo Nav::widget([
-                'options' => ['class' => 'navbar-nav navbar-right'],
-                'items' => [
-                    ['label' => 'Home', 'url' => ['/yiipass/password/index']],
-                    /**
-                     * Display user actions if applications is not in
-                     * single user mode.
-                     */
-                    empty($aNavWidgetUserActions) ? '' :
-                    $aNavWidgetUserActions
-                ],
-            ]);
+            $aNavbar = [
+              'options' => ['class' => 'navbar-nav navbar-right'],
+              'items' =>
+                  /**
+                   * Display user actions if applications is not in
+                   * single user mode.
+                   */
+                empty($aNavWidgetUserActions) ? '' :
+                  $aNavWidgetUserActions
+              ,
+            ];
+
+            echo Nav::widget($aNavbar);
             NavBar::end();
         ?>
 
