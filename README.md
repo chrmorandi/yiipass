@@ -18,6 +18,8 @@ systems are using the KeePass XML format. For example:
     * [MiniKeePass (app - iOS)](https://itunes.apple.com/en/app/minikeepass-secure-password/id451661808?mt=8)
 * Last but not least: easy and fast to modify and extend, because it's based on the excellent Yii2 PHP framework.
     * Quick start with coding via the great [online guide](http://www.yiiframework.com/doc-2.0/guide-index.html).
+* Single user mode. Just set it along with a hash for encoding and decoding in your config/params.php file. Then
+sign in with .htaccess and .htpasswd protection.
 
 Getting Started
 ------------------
