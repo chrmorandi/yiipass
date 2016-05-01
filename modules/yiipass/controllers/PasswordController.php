@@ -240,6 +240,8 @@ class PasswordController extends Controller
                 $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             }
         } else {
+            PasswordController::teamSecretCheck();
+
             $searchModel = new PasswordSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         }
