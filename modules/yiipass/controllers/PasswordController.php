@@ -592,6 +592,7 @@ class PasswordController extends Controller
     /**
      * Checks the team secret. If not set, the user will be redirected to the
      * team secret form.
+     * 
      * @return \yii\web\Response|bool
      */
     public static function teamSecretCheck()
@@ -650,7 +651,7 @@ class PasswordController extends Controller
 
     /**
      * Sets the team secret in cookie.
-     * 
+     *
      * @param string $sTeamSecret The team secret.
      *
      * @return null
