@@ -630,6 +630,7 @@ class PasswordController extends Controller
 
     /**
      * Returns the team secret value from cookie.
+     *
      * @return mixed
      */
     public static function getTeamSecret()
@@ -639,6 +640,7 @@ class PasswordController extends Controller
 
     /**
      * Removes the team secret.
+     *
      * @return null
      */
     public static function removeTeamSecret()
@@ -648,6 +650,7 @@ class PasswordController extends Controller
 
     /**
      * Sets the team secret in cookie.
+     * 
      * @param string $sTeamSecret The team secret.
      *
      * @return null
